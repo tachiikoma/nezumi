@@ -1,5 +1,5 @@
-====== anti-debug-#00 ======
-<sub>{{anti-debug-#00.odt|Original file}}</sub>
+====== anti-debug-00 ======
+<sub>{{anti-debug-00.odt|Original file}}</sub>
 
 ====== энциклопедия антиотладочных приемов — россыпи головоломок\\ выпуск #00h (пилотный) ======
 
@@ -17,7 +17,7 @@
 
 {{anti-debug-00_Image_0.jpg?553}}
 
-Рисунок 1 мыщъх собственной персоной
+**Рисунок 1 мыщъх собственной персоной**
 
 ===== боевой арсенал =====
 
@@ -33,7 +33,7 @@
 
 {{anti-debug-00_Image_1.png?552}}
 
-Рисунок 2 внешний вид Olly Debugger
+**Рисунок 2 внешний вид Olly Debugger**
 
 ==== Olly Debugger 2.00с pre-alpha 3 ====
 
@@ -47,7 +47,7 @@ IDA Pro – коммерческий продукт, причем больши
 
 {{anti-debug-00_Image_2.png?553}}
 
-Рисунок 3 отладчик, интегрированный в IDA Pro (консольная редакция)
+**Рисунок 3 отладчик, интегрированный в IDA Pro (консольная редакция)**
 
 ==== Microsoft Debugger 6.8.4.0 ====
 
@@ -59,7 +59,7 @@ Microsoft Debugger может работать как в на прикладно
 
 {{anti-debug-00_Image_3.png?553}}
 
-Рисунок 4 Microsoft Debugger (графическая версия)
+**Рисунок 4 Microsoft Debugger (графическая версия)**
 
 ==== Soft-Ice 2.6.0 (Build 336) ====
 
@@ -71,7 +71,7 @@ Microsoft Debugger может работать как в на прикладно
 
 {{anti-debug-00_Image_4.png?553}}
 
-Рисунок 5 легендарный мягкий лед
+**Рисунок 5 легендарный мягкий лед**
 
 ===== >>> врезка знаете ли вы что… =====
 
@@ -85,7 +85,7 @@ Microsoft Debugger может работать как в на прикладно
 
 {{anti-debug-00_Image_5.png?552}}
 
-Рисунок 6 Syser за работой
+**Рисунок 6 Syser за работой**
 
 ==== GDB 6.1 ====
 
@@ -97,7 +97,7 @@ GNU Debugger – основной отладчик под UNIX, ориенти
 
 {{anti-debug-00_Image_6.png?552}}
 
-Рисунок 7 GDB (консольная версия с tui-интерфейсом)
+**Рисунок 7 GDB (консольная версия с tui-интерфейсом)**
 
 ===== >>> врезка знаете ли вы, что… =====
 
@@ -107,10 +107,10 @@ GNU Debugger – основной отладчик под UNIX, ориенти
 
 …для запуска soft-ice под VM Ware необходимо добавить в конфигурационный файл виртуальной машины (*.vmx) следующие строки (остальные отладчики запускаются на ней и без этого):
 
-  - svga.maxFullscreenRefreshTick = "2";
-  - vmmouse.present = "FALSE";
-  - paevm = TRUE;
-  - processor1.use = FALSE;
+  * svga.maxFullscreenRefreshTick = "2";
+  * vmmouse.present = "FALSE";
+  * paevm = TRUE;
+  * processor1.use = FALSE;
 ===== >>> врезка знаете ли вы, что… =====
 
 …если soft-ice и Syser не запускаются, то причина, возможно, кроется в конфликте с драйвером stpd.sys, который устанавливает копировщик CD/DVD дисков Alcohol и его младший собрат Daemon Tools для предотвращения обнаружения виртуальных CD/DVD-дисков, создаваемых эмулятором, причем, поведение драйвера stpd.sys столь агрессивно, что отладчики с ним не живут и это никак не лечится — либо stpd.sys, либо отладчики, но никак не то и другое сразу!
@@ -121,24 +121,24 @@ GNU Debugger – основной отладчик под UNIX, ориенти
 
 ===== >>> врезка ссылки на отладчики, упомянутые в статье =====
 
-  - **Olly-Debugger 1.10:**
-    - __http://www.ollydbg.de/odbg110.zip;__
-  - **Olly-Debugger 2.00c pre-alpha 3:**
-    - __http://www.ollydbg.de/odbg200c.zip;__
-  - **IDA Pro 5.2 (commercial_**:
-    - __http://www.datarescue.com/idabase;__
-  - **IDA Pro 4.9 Freeware:**
-    - __http://www.hex-rays.com/idapro/idadownfreeware.htm;__
-  - **Microsoft Debugging Tools for Windows:**
-    - __http://msdl.microsoft.com/download/symbols/debuggers/dbg_x86_6.8.4.0.msi__;
-  - **Windows Driver Kit (WDK) ****для всех систем по Вислу включительно:**
-    - __http://www.microsoft.com/whdc/DevTools/default.mspx__ (требует регистрации);
-  - **Windows Server 2003 SP1 DDK:**
-    - __http://www.microsoft.com/whdc/devtools/ddk/default.mspx__;
-  - **Soft-Ice**:
-    - __www.google.com__;-)
-  - **Syser 1.95.19000.0894**:
-    - __http://www.sysersoft.com/download/download.php__;
-  - **GDB**:
-    - __http://sourceware.org/gdb/download/;__
+  * **Olly-Debugger 1.10:**
+    * http://www.ollydbg.de/odbg110.zip;
+  * **Olly-Debugger 2.00c pre-alpha 3:**
+    * http://www.ollydbg.de/odbg200c.zip;
+  * **IDA Pro 5.2 (commercial_**:
+    * http://www.datarescue.com/idabase;
+  * **IDA Pro 4.9 Freeware:**
+    * http://www.hex-rays.com/idapro/idadownfreeware.htm;
+  * **Microsoft Debugging Tools for Windows:**
+    * http://msdl.microsoft.com/download/symbols/debuggers/dbg_x86_6.8.4.0.msi;
+  * **Windows Driver Kit (WDK) ****для всех систем по Вислу включительно:**
+    * http://www.microsoft.com/whdc/DevTools/default.mspx (требует регистрации);
+  * **Windows Server 2003 SP1 DDK:**
+    * http://www.microsoft.com/whdc/devtools/ddk/default.mspx;
+  * **Soft-Ice**:
+    * www.google.com;-)
+  * **Syser 1.95.19000.0894**:
+    * http://www.sysersoft.com/download/download.php;
+  * **GDB**:
+    * http://sourceware.org/gdb/download/;
 

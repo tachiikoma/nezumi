@@ -2,7 +2,7 @@
 
 Обсуждаем в комментариях и/или xmpp-конференции cyb@conference.cyberpunk.us
 
-Бэкэнд с контентом на гитхабе https://github.com/tachiikoma/nezumi, sync every 5 min, принимаем commits и issue через github.
+Бэкэнд с контентом на гитхабе [[https://github.com/tachiikoma/nezumi|https://github.com/tachiikoma/nezumi]], sync every 5 min, принимаем commits и issue через github.
 
 ====== ToDO ======
 
@@ -18,5 +18,8 @@
   * [[https://www.litres.ru/kris-kasperski/fundamentalnye-osnovy-hakerstva-iskusstvo-dizassemblirovaniya/|Фундаментальные основы хакерства. Искусство дизассемблирования]] — 250,00 руб.
   * [[https://play.google.com/store/books/author?id=%D0%9A%D0%B0%D1%81%D0%BF%D0%B5%D1%80%D1%81%D0%BA%D0%B8+%D0%9A%D1%80%D0%B8%D1%81|https://play.google.com/store/books/author?id=%D0%9A%D0%B0%D1%81%D0%BF%D0%B5%D1%80%D1%81%D0%BA%D0%B8+%D0%9A%D1%80%D0%B8%D1%81]]
   * [[https://play.google.com/store/books/author?id=Kris+Kaspersky|https://play.google.com/store/books/author?id=Kris+Kaspersky]]
+
+=====   =====
+
 ~~DISCUSSION~~
 

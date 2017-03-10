@@ -1,5 +1,5 @@
-====== anti-debug-#03 ======
-<sub>{{anti-debug-#03.odt|Original file}}</sub>
+====== anti-debug-03 ======
+<sub>{{anti-debug-03.odt|Original file}}</sub>
 
 ====== энциклопедия антиотладочных приемов —\\ обработка необрабатываемых исключений\\ выпуск #03h ======
 
@@ -17,7 +17,7 @@
 
 {{anti-debug-03_Image_0.png?553}}
 
-Рисунок 1 SetUnhandledExceptionFilter() на MSDN
+**Рисунок 1 SetUnhandledExceptionFilter() на MSDN**
 
 Функция, SetUnhandledExceptionFilter(), перекрывая системный обработчик, в неволе работать отказывается, то есть получает управление только, когда процесс не находится под отладчиком, в противном случае исключение передается непосредственно самому отладчику и это не баг отладчика, не дефект операционной системы, а задумка проектировщиков, кстати сказать, довольно оригинальная и полезная. Если отладчика нет – установленный программистом обработчик берет управление на себя и завершает работу программы максимально корректным образом. Если же процесс находится под отладкой, операционная система передает бразды правления отладчику, позволяя разобраться с ситуацией, поскольку, после завершения программы разбираться будет не с чем и некому.
 
@@ -31,85 +31,64 @@
 
 Один из примеров реализации такого тестового стенда приведен на листинге 1.
 
+<code c>
 #include <windows.h>
 
 char dbgnoo[]= "debugger is not detected";
-
 char dbgyes[]= "debugger is detected :-)";
 
-char *p = dbgyes;**// we expect debugger by default**
+char *p = dbgyes;			// we expect debugger by default
 
 LONG souriz(struct _EXCEPTION_POINTERS *ExceptionInfo)
-
 {
-
-**// if we're here, process is _not_ under debugger **
-
-p = dbgnoo;
-
-
-
-**// skip INT 03 (CCh) command**
-
-ExceptionInfo->ContextRecord->Eip++;
-
-
-
-**// we want the program to continue execution**
-
-return EXCEPTION_CONTINUE_EXECUTION;
-
+	// if we're here, process is _not_ under debugger 
+	p = dbgnoo;
+	
+	// skip INT 03 (CCh) command
+	ExceptionInfo->ContextRecord->Eip++;
+	
+	// we want the program to continue execution
+	return EXCEPTION_CONTINUE_EXECUTION;
 }
 
 nezumi()
-
 {
 
-**// supersede the default top-level exception handler by souriz() proc**
-
-SetUnhandledExceptionFilter((LPTOP_LEVEL_EXCEPTION_FILTER)&souriz);
-
-
-
-__asm{
-
-int 03**; // generate an exception**
-
+	// supersede the default top-level exception handler by souriz() proc
+	SetUnhandledExceptionFilter((LPTOP_LEVEL_EXCEPTION_FILTER)&souriz);
+	
+	__asm{		
+		int 03				; // generate an exception
+	}
+	
+	// terminate the program, showing the result
+	ExitProcess(MessageBox(0,p,p,0));
 }
+</code>
 
-
-
-**// terminate the program, showing the result**
-
-ExitProcess(MessageBox(0,p,p,0));
-
-}
-
-Листинг 1 исходный текст программы SetUnhandledExceptionFilter.c, демонстрирующий технику использования обозначенной функции для борьбы с отладчиками
+**Листинг 1 исходный текст программы SetUnhandledExceptionFilter.c, демонстрирующий технику использования обозначенной функции для борьбы с отладчиками**
 
 Собираем программу компилятором MS Visual C++ со следующими ключами (см. листинг 2) и получаем файл размером всего в 832 байта (и это еще не предел, — если выкинуть MS-DOS заглушку, программа похудеет еще на полста байт!)
 
+<code>
 SET NIK=SetUnhandledExceptionFilter
-
 cl.exe /c /Ox %NIK%.c
-
 link.exe %NIK%.obj /FIXED /ENTRY:nezumi \
+	/SUBSYSTEM:CONSOLE /ALIGN:16	  \
+	/MERGE:.data=.text /MERGE:.rdata=.text KERNEL32.LIB USER32.LIB
+</code>
 
-/SUBSYSTEM:CONSOLE /ALIGN:16 \
-
-/MERGE:.data=.text /MERGE:.rdata=.text KERNEL32.LIB USER32.LIB
-
-Листинг 2 сборка программы SetUnhandledExceptionFilter.c в командной строке среды Microsoft Visual C++
+**Листинг 2 сборка программы SetUnhandledExceptionFilter.c в командной строке среды Microsoft Visual C++**
 
 {{anti-debug-03_Image_1.png?553}}
 
-Рисунок 2 запуск тестовой программы под "чистой" осью проходит нормально
+**Рисунок 2 запуск тестовой программы под "чистой" осью проходит нормально**
 
 Запустив файл на выполнение (см. рис. 2), мы получим сообщение, что отладчик не обнаружен. А как на счет работы под отладчиком?! Загружаем SetUnhandledExceptionFilter.exe в Ольгу и давим <F9> (Run). Ага! Ольга стопорится на INT 03h, что выглядит подозрительно (нормальные программы INT 03h не вызывают!), но не смертельно. Жмем <F9> еще раз для продолжения выполнения и… ловим месседж: "дэбугэр ис дэтэктэт" с наглой ухмыляющейся рожей (см. рис. 3).
 
 {{anti-debug-03_Image_2.png?553}}
 
-Рисунок 3 запуск тестовой программы под "чистой" Ольгой (без специальных plug-in'ов) приводит к детекции отладчика
+**Рисунок 3 запуск тестовой программы под "чистой" Ольгой (без специальных plug-in'ов) приводит к детекции отладчика**
 
 Начинаем соображать — как можно это отловить, обломав защите рога. Да нет ничего проще — достаточно поставить точку останова на API-функцию SetUnhandledExceptionFilter(), запомнить передаваемый ей указатель на процедуру-обработчик (в данном случае это souriz) и кидать сюда управление каждый раз, когда отладчик ловит исключение, не обрабатываемое SEH-фильтрами, установленными программистом (если они вообще есть).
 
@@ -121,7 +100,7 @@ link.exe %NIK%.obj /FIXED /ENTRY:nezumi \
 
 {{anti-debug-03_Image_3.png?553}}
 
-Рисунок 4 "Hide Debugger" plug-in позволяет бороться с защитами, основанными на обработке необрабатываемых исключений
+**Рисунок 4 "Hide Debugger" plug-in позволяет бороться с защитами, основанными на обработке необрабатываемых исключений**
 
 Заходим в меню "Plug-ins", находим там "Hide debugger" и в опциях взводим галочку "Unhanded exception tricks" (см. рис. 4), затем нажимам <CTRL-O>, в открывавшемся диалоговом окне выбираем вкладку "Exceptions" и взводим галочку "INT 03 breaks" для передачи ломаемой программе исключений, генерируемых INT 03h, т. к. в конфигурации по умолчанию Ольга, как и большинство других отладчиков прикладного уровня, молчаливо поглощает INT 03h, и потому никакой обработчик исключений вообще не вызывается (на самом деле, INT 03h не имеет никакого отношения к SetUnhandledExceptionFilter и, если бы, мы, например, генерировали исключения путем обращения к нулевому указателю, последнего действия не потребовалось — достаточно было бы просто взвести "INT 03 breaks", но подробнее о передаче исключений программе мы поговорим в следующем выпуске, а пока вернемся к нашим баранам).
 
@@ -129,13 +108,13 @@ link.exe %NIK%.obj /FIXED /ENTRY:nezumi \
 
 {{anti-debug-03_Image_4.png?553}}
 
-Рисунок 5 plug-in "Hide Debugger" позволил спрятать отладчик от защиты
+**Рисунок 5 plug-in "Hide Debugger" позволил спрятать отладчик от защиты**
 
 Что же касается отладчиков типа Soft-Ice и Syser, то они вообще никак не воздействуют на поведение функции SetUnhandledExceptionFilter(), поскольку, отладочного процесса не порождают и ведут себя так, как будто их здесь вообще нет. Однако, применительно к терзаемой нами программе, — если сказать отладчику "I3HERE ON", заставляя его всплывать на программных точках останова (у многих хакеров эта команда пробита в строке инициализации), то отладчик "зажует" исключение, генерируемое инструкцией INT 03h и потому до ломаемой программы оно вообще не дойдет, а, значит, установленный фильтр не будет вызван и на экрана снова появится улыбающаяся харя, подтверждающая детект отладчика (cм. рис. 6)
 
 {{anti-debug-03_Image_5.png?553}}
 
-Рисунок 6 отладчики Soft-Ice и Syser так же "паляться", если рычажок "I3HERE"установлен в положение "ON"
+**Рисунок 6 отладчики Soft-Ice и Syser так же "паляться", если рычажок "I3HERE"установлен в положение "ON"**
 
 Таким образом, трюк с SetUnhandledExceptionFilter() реально работает только с IDA-Pro, MS VC и другими примитивными отладчиками. Для всех остальных он не представляет никакой угрозы, если, конечно, заранее знать что это такое и с чем его едят, ибо в конфигурации по умолчании, Ольга детектиться только так.
 
@@ -145,79 +124,46 @@ link.exe %NIK%.obj /FIXED /ENTRY:nezumi \
 
 Естественно, после того как Asterix перепишет свой plug-in, сигнатуры уйдут лесом и данный метод детекции перестанет работать, однако, нетрудно реализовать универсальный детектор, основанный на самом факте подмены адреса NtQueryInformationProcess(), для чего достаточно распарсить таблицу импорта KERNEL32.DLL и, если адрес NtQueryInformationProcess() выходит за пределы модуля NTDLL.DLL (откуда эта функция, собственного говоря, и импортируется), то, значит, мы имеем дело с "не стерильной" системой, возвращая значение UNKNOWN_HIDE_DEBUGGER (строго говоря, это может быть и не только HIDE_DEBUGGER, но и какой ни будь rootkit, но разработчиков защит подобные мелочи не волнуют).
 
-**// very dirty anti-anti-debug trick**
-
+<code c>
+// very dirty anti-anti-debug trick
 check_for_asterix_hide_debugger_plugin()
-
 {
-
-int a; int ret;int p=0; BYTE *x;
-
-MEMORY_BASIC_INFORMATION meminfo;
-
-
-
-**// asterix's hidedebugger plugin changes addr of NtQueryInformationProcess**
-
-**// in the KERNEL32.DLL IAT to his own handler placed in the heap rwe block**
-
-**// so, to detect the plug-in, we have to find the _certain_ heap-block and**
-
-**// check signature out. it'll work until asterix doesn't rewrite the code.**
-
-while(1)
-
-{
-
-if (!VirtualQuery((void*)p, &meminfo, sizeof(meminfo))) break;
-
-if ((meminfo.RegionSize==0x1000) && (meminfo.Type==MEM_PRIVATE)
-
-&&(meminfo.State==MEM_COMMIT)&&(meminfo.Protect==PGE_EXECUTE_READWRITE)
-
-&&(*((unsigned int*)p)==0x04247C83)) returnASTERIX_HIDE_DEBUGGER;
-
-p += meminfo.RegionSize;
-
+	int a; int ret;int p=0; BYTE *x;
+	MEMORY_BASIC_INFORMATION meminfo;
+	
+	// asterix's hidedebugger plugin changes addr of NtQueryInformationProcess
+	// in the KERNEL32.DLL IAT to his own handler placed in the heap rwe block
+	// so, to detect the plug-in, we have to find the _certain_ heap-block and
+	// check signature out. it'll work until asterix doesn't rewrite the code.
+	while(1)
+	{
+		if (!VirtualQuery((void*)p, &meminfo, sizeof(meminfo))) break;
+		if ((meminfo.RegionSize==0x1000) && (meminfo.Type==MEM_PRIVATE)
+		&&(meminfo.State==MEM_COMMIT)&&(meminfo.Protect==PGE_EXECUTE_READWRITE)
+		&&(*((unsigned int*)p)==0x04247C83)) return ASTERIX_HIDE_DEBUGGER;
+		p += meminfo.RegionSize;
+	}
+	
+	// I'm too lazy to parse IAT of the KERNEL32.DLL, so I just check out
+	// the address of the NtQueryInformationProcess, found in GetLogicalDrives
+	// of course, I have no guarantee the code of GetLogicalDrives will be
+	// unchanged in the next versions of Windows. I know to parse IAT, but...
+	// I don't want to. I told you, I'm too lazzy.
+	x = (BYTE*) GetProcAddress(GetModuleHandle("KERNEL32.DLL"),"GetLogicalDrives");
+	for (a = 0; a < 0x69; a++)
+	{
+		if( ( *((DWORD*)x)==0x15FFFF6A ) && ( *((WORD*)(x+8))==0x0C085)
+		&&(*(DWORD*)(*(DWORD*)(x+4)) < (DWORD)GetModuleHandle("NTDLL.DLL")))
+		return MessageBox(0,new, hid,0); return UNKNOWN_HIDE_DEBUGGER;
+		x++;
+	}
+	
+	// if we're here, well... hide-debugger plug-in is not detected :-)
+	return NO_HIDE_DEBUGGER;
 }
+</code>
 
-
-
-**// I'm too lazy to parse IAT of the KERNEL32.DLL, so I just check out**
-
-**// the address of the NtQueryInformationProcess, found in GetLogicalDrives**
-
-**// of course, I have no guarantee the code of GetLogicalDrives will be**
-
-**// unchanged in the next versions of Windows. I know to parse IAT, but...**
-
-**// I don't want to. I told you, I'm too lazzy.**
-
-x = (BYTE*) GetProcAddress(GetModuleHandle("KERNEL32.DLL"),"GetLogicalDrives");
-
-for (a = 0; a < 0x69; a++)
-
-{
-
-if( ( *((DWORD*)x)==0x15FFFF6A ) && ( *((WORD*)(x+8))==0x0C085)
-
-&&(*(DWORD*)(*(DWORD*)(x+4)) < (DWORD)GetModuleHandle("NTDLL.DLL")))
-
-return MessageBox(0,new, hid,0); return UNKNOWN_HIDE_DEBUGGER;
-
-x++;
-
-}
-
-
-
-**// if we're here, well... hide-debugger plug-in is not detected :-)**
-
-return NO_HIDE_DEBUGGER;
-
-}
-
-Листинг 3 код детекции "Hide debugger" plug-in'а
+**Листинг 3 код детекции "Hide debugger" plug-in'а**
 
 ===== >>> врезка сводная таблица детекта отладчиков =====
 
