@@ -1,0 +1,3 @@
+====== Фундаментальные основы хакерства. Искусство дизассемблирования ======
+
+{{pdfjs 900px>:books:pdf:fundamentalnye-osnovy-hakerstva-iskusstvo-dizassemblirovaniya.pdf}}

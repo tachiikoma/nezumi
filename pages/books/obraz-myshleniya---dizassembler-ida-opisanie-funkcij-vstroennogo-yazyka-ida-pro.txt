@@ -1,0 +1,4 @@
+====== Образ мышления - дизассемблер IDA. Описание функций встроенного языка IDA Pro ======
+
+{{pdfjs 900px>:books:pdf:obraz_myshlenija_ida.pdf}}
+

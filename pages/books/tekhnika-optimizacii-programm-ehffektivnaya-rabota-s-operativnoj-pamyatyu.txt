@@ -1,0 +1,4 @@
+====== Техника оптимизации программ — эффективная работа с оперативной памятью ======
+
+{{pdfjs 900px>:books:pdf:tekhnika-optimizacii-programm-ehffektivnaya-rabota-s-operativnoj-pamyatyu.pdf}}
+

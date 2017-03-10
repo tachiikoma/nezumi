@@ -1,0 +1,4 @@
+====== Искусство дизассемблирования ======
+
+{{pdfjs 150% 900px>:books:pdf:iskusstvo-dizassemblirovaniya.pdf}}
+

@@ -1,0 +1,20 @@
+====== Обсуждение ======
+
+Обсуждаем в комментариях и/или xmpp-конференции cyb@conference.cyberpunk.us
+
+====== ToDO ======
+
+  - Articles (doc → odt, extract pictures, post via ckeditor OR (better) use docpdf to dokuwiki converter.
+  - Books (pdfjs → convert all docs and djvu to pdf; text → pdf and djvu recognize via finereader and post; doc → odt and post via ckeditor)
+  - Archive (extract and remove dublicate)
+  - Text alignment (center)
+  - Проверить продают ли валидные PDF и желательно выкупить, т.к техника защиты компакт-дисков от копирования нигде кроме кривых doc не представлена, а остальные книги лишь в виде сканов с плохим разрешением, англоязычные книги лишь в виде кривых chm
+
+  * [[https://www.litres.ru/kris-kasperski/iskusstvo-dizassemblirovaniya-6987976/|Искусство дизассемблирования]] — 423,00 руб.
+  * [[https://www.litres.ru/kris-kasperski/tehnika-zaschity-kompakt-diskov-ot-kopirovaniya/|Техника защиты компакт-дисков от копирования]] — 135,00 руб.
+  * [[https://www.litres.ru/kris-kasperski/tehnika-otladki-programm-bez-ishodnyh-tekstov/|Техника отладки программ без исходных текстов]] — 215,00 руб.
+  * [[https://www.litres.ru/kris-kasperski/fundamentalnye-osnovy-hakerstva-iskusstvo-dizassemblirovaniya/|Фундаментальные основы хакерства. Искусство дизассемблирования]] — 250,00 руб.
+  * [[https://play.google.com/store/books/author?id=%D0%9A%D0%B0%D1%81%D0%BF%D0%B5%D1%80%D1%81%D0%BA%D0%B8+%D0%9A%D1%80%D0%B8%D1%81|https://play.google.com/store/books/author?id=%D0%9A%D0%B0%D1%81%D0%BF%D0%B5%D1%80%D1%81%D0%BA%D0%B8+%D0%9A%D1%80%D0%B8%D1%81]]
+  * [[https://play.google.com/store/books/author?id=Kris+Kaspersky|https://play.google.com/store/books/author?id=Kris+Kaspersky]]
+~~DISCUSSION~~
+

@@ -1,0 +1,4 @@
+====== Тонкости и секреты работы с Интернет ======
+
+{{pdfjs 600px>:books:pdf:ukrochenie_interneta.pdf}}
+

@@ -1,0 +1,4 @@
+====== Техника сетевых атак. Приемы противодействия ======
+
+{{pdfjs 900px>:books:pdf:texnika_setevyx_atak.pdf}}
+

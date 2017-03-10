@@ -1,0 +1,4 @@
+====== Записки исследователя компьютерных вирусов ======
+
+{{pdfjs 900px>:books:pdf:kompyuternye-virusy-iznutri-i-snaruzhi.pdf}}
+

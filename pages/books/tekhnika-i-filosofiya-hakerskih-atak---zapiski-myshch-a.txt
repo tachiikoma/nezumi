@@ -1,0 +1,4 @@
+====== Техника и философия хакерских атак - записки мыщьх'а ======
+
+{{pdfjs 900px>:books:pdf:texnika_i_filosofija_xakerskix_atak.pdf}}
+
