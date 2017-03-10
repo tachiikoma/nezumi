@@ -1,5 +1,9 @@
 ====== Интервью с Крисом Касперски ======
 
+===== 2000 =====
+
+[[:biography:interview:programmist-iz-glubinki|Видеорепортаж. Программист из глубинки.]]
+
 ===== 2012 =====
 
 [[:biography:interview:intervyu-s-krisom-kasperski|Интервью с Крисом Касперски, Журнал «Хакер»]]
