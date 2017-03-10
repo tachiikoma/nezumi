@@ -2,7 +2,7 @@
 
 {{:project:nezumi.png?nolink&169x250}}
 
-[[:project|Проект]] |  [[:project:discussion|Обсуждение]] | [[https://github.com/tachiikoma/nezumi|Github]]
+[[:project|Проект]] | [[:project:discussion|Обсуждение]] | [[https://github.com/tachiikoma/nezumi|Github]]
 
 [[:articles|Статьи]] | [[:books|Книги]]
 
@@ -10,7 +10,7 @@
 
 ===== Крис Касперски =====
 
-[[:biography|Биография]] | [[:biography:interview|Интервью]] | [[:biography:death|Гибель]] | [[:biography:archive|Архив по ИТ]]
+[[:biography|Биография]] | [[:biography:interview|Интервью]] | [[:gallery:biography|Галерея]] | [[:biography:death|Гибель]] | [[:biography:archive|Архив по ИТ]]
 
 {{:biography:84a33323cda1bc.jpg?nolink&444x250}}
 

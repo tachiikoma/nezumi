@@ -1,1 +1,3 @@
-{{ :biography:interview:крис_касперски_каким_он_был-x6et1rzo4i4.mp4 | }}
+====== Программист из глубинки. Крис Касперски ======
+
+ {{:biography:interview:programmist-iz-glubinki.mp4|520x440}}

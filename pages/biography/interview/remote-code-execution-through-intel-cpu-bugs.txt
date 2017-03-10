@@ -1,0 +1,2 @@
+====== Remote Code Execution Through Intel CPU Bugs. Kris Kaspersky ======
+{{ :biography:interview:remote-code-execution-through-intel-cpu-bugs.mp4|640x480 }}
