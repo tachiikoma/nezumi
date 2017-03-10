@@ -2,6 +2,8 @@
 
 Обсуждаем в комментариях и/или xmpp-конференции cyb@conference.cyberpunk.us
 
+Бэкэнд с контентом на гитхабе https://github.com/tachiikoma/nezumi, sync every 5 min, принимаем commits и issue через github.
+
 ====== ToDO ======
 
   - Articles (doc → odt, extract pictures, post via ckeditor OR (better) use docpdf to dokuwiki converter.
