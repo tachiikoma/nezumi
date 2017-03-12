@@ -1,10 +1,10 @@
   * [[:books|Книги]]
-  * [[:articles|Статьи]]
+  * [[:articles.lite|Статьи]]
   * Проект
     * [[:project|О проекте]]
     * [[:project:discussion|Обсуждение]]
   * Мыщъх
-    * [[:biography | Биография]]
-    * [[:biography:interview | Интервью]]
-    * [[:biography:death | Гибель]]
+    * [[:biography|Биография]]
+    * [[:biography:interview|Интервью]]
+    * [[:biography:death|Гибель]]
 

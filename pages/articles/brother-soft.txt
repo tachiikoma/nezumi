@@ -1,12 +1,11 @@
-====== brother-soft ======
-<sub>{{brother-soft.odt|Original file}}</sub>
-
 ====== управление печатающими устройствами\\ программным обеспечением фирмы brother ======
+<sub>{{brother-soft.odt|Original file}}</sub>
 
 крис касперски, no-email
 
 **эффективное управление печатающими устройствами немыслимо без специализированного программного обеспечения (штатные средства ****windows ****для этой цели не****подходят и создают больше проблем, чем их решают). фирма ****brother**** (продукция которой хорошо известна и пользуется большим уважением на российском рынке) выпустила комплект утилит ****BrAdmin Professional, Web BRAdmin**** и ****BrAdmin Light****, облегчающих системному администратору его и без того нелегкую жизнь и, кстати говоря, работающих не только с принтерами от самой ****brother****, но и поддерживающих продукцию сторонних производителей****!**
 
+{{INLINETOC}}
 ===== введение\\ /* полоса 2, колонка 1 */ =====
 
 В состав Windows входит "Диспетчер Печати", поддерживающий основные функции управления как локальными, так и сетевыми печатающими устройствами. Казалось бы — зачем устанавливать что-то еще? На самом деле, "Диспетчер Печати" реально рассчитан на управление всего лишь одним принтером, а когда этих принтеров — десятки, то даже опытные пользователи тратят уйму времени на устранение конфликтных ситуаций и поиска принтера на который по ошибке улетел документ.
@@ -25,29 +24,30 @@ Web BRAdmin — в отличии от двух последних програ
 
 
 
-  - **BrAdmin Professional (**локализованная русская версия):
-    - __http://welcome.solutions.brother.com/bsc/public/eu/ru/ru/dlf/dlf/000000/002600/dlf002651.html?reg=eu&c=ru&lang=ru&prod=mfc8860dn_all&type2=2&os=7&flang=61&dlid=dlf002651__;
-  - Описание **BrAdmin Professional **(на русском языке):
-    - http://solutions.brother.com/bradmin_pro/ru_ru/index.html;
-  - **Web BrAdmin** (доступна только англоязычная версия):
-    - __http://welcome.solutions.brother.com/bsc/public/eu/ru/ru/dlf/dlf/000000/003200/dlf003230.html?reg=eu&c=ru&lang=ru&prod=mfc8860dn_all&type2=2&os=7&flang=61&dlid=dlf003230__;
-  - **Описание Web BrAdmin (на русском языке)**:
-    - __http://solutions.brother.com/web_manage/ru_ru/__;
-  - **BRPrint Auditor (**агент для работы с локальными принтерами, англоязычная версия**):**
-    - __http://solutions.brother.com/Common_Download/en_us/auditor_pro3/index.html__;
+  * **BrAdmin Professional (**локализованная русская версия):
+    * http://welcome.solutions.brother.com/bsc/public/eu/ru/ru/dlf/dlf/000000/002600/dlf002651.html?reg=eu&c=ru&lang=ru&prod=mfc8860dn_all&type2=2&os=7&flang=61&dlid=dlf002651;
+  * Описание **BrAdmin Professional **(на русском языке):
+    * http://solutions.brother.com/bradmin_pro/ru_ru/index.html;
+  * **Web BrAdmin** (доступна только англоязычная версия):
+    * http://welcome.solutions.brother.com/bsc/public/eu/ru/ru/dlf/dlf/000000/003200/dlf003230.html?reg=eu&c=ru&lang=ru&prod=mfc8860dn_all&type2=2&os=7&flang=61&dlid=dlf003230;
+  * **Описание Web BrAdmin (на русском языке)**:
+    * http://solutions.brother.com/web_manage/ru_ru/;
+  * **BRPrint Auditor (**агент для работы с локальными принтерами, англоязычная версия**):**
+    * http://solutions.brother.com/Common_Download/en_us/auditor_pro3/index.html;
+
 ===== /* полоса 2, колонка 3 */ =====
 
 {{brother-soft_Image_0.png?552}}
 
-Рисунок 1 хождение по мукам или управление множеством принтеров через штатный "Диспетчер Печати" Windows
+**Рисунок 1 хождение по мукам или управление множеством принтеров через штатный "Диспетчер Печати" Windows**
 
 {{brother-soft_Image_1.png?553}}
 
-Рисунок 2 BrAdmin Professional ищет печатающие устройства, находящиеся в локальной сети
+**Рисунок 2 BrAdmin Professional ищет печатающие устройства, находящиеся в локальной сети**
 
 {{brother-soft_Image_2.png?553}}
 
-Рисунок 3 агент BRPrint Auditor отслеживает подключение печатающих устройств к узлам локальной сети через LPT/USB порты
+**Рисунок 3 агент BRPrint Auditor отслеживает подключение печатающих устройств к узлам локальной сети через LPT/USB порты**
 
 ===== основные возможности BrAdmin Professional\\ /* полоса 3, колонка 1, колонка 2 */ =====
 
@@ -115,22 +115,22 @@ BrPrint Auditor по умолчанию работает через порт 115
 
 {{brother-soft_Image_3.png?163}}{{brother-soft_Image_4.png?191}}{{brother-soft_Image_5.png?170}}
 
-Рисунок 4 настройка штатного брандмауэра, встроенного в операционную систему Windows Vista
+**Рисунок 4 настройка штатного брандмауэра, встроенного в операционную систему Windows Vista**
 
 {{brother-soft_Image_6.png?553}}
 
-Рисунок 5 BrAdmin Professional — настройка параметров обнаружения печатающих устройств
+**Рисунок 5 BrAdmin Professional — настройка параметров обнаружения печатающих устройств**
 
 {{brother-soft_Image_7.png?552}}
 
-Рисунок 6 BrPrint Auditor и службы, связанные с ним
+**Рисунок 6 BrPrint Auditor и службы, связанные с ним**
 
 {{brother-soft_Image_8.png?314}}{{brother-soft_Image_9.png?218}}
 
-Рисунок 7 BrPrint Auditor в "Панели Управления" и его конфигурирование
+**Рисунок 7 BrPrint Auditor в "Панели Управления" и его конфигурирование**
 
 {{brother-soft_Image_10.png?518}}
 
-Рисунок 8 в отсутствии Microsoft IIS установка Web BrAdmin прерывается с сообщением об ошибке
+**Рисунок 8 в отсутствии Microsoft IIS установка Web BrAdmin прерывается с сообщением об ошибке**
 
 

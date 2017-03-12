@@ -1,12 +1,11 @@
-====== bare-hw ======
-<sub>{{bare-hw.odt|Original file}}</sub>
-
 ====== сидя на голом железе ======
+<sub>{{bare-hw.odt|Original file}}</sub>
 
 крис касперски, ака мыщъх, ака souriz, ака nezumi, akaelraton, ака толстый бобер, no-email
 
 **в программировании голого железа есть какое-то непередаваемое словами очарование в котором мало практической пользы, но зато огромное эстетическое удовлетворение и наслаждение. сегодня мы спустимся на самый низкий уровень, который только возможно достигнуть на ****IBM PC****! держитесь, мы будем программировать не только без операционной системы, но даже без ****BIOS****'а!**
 
+{{INLINETOC}}
 ===== введение =====
 
 На прикладном уровне обитать неинтересно. Здесь все приходится делать через готовые интерфейсы (типа win32 API и иже с ними), громоздящиеся своими иерархическими слоями друг на друга. С этой точки зрения, программирования под x86 мало чем отличается от той же Альфы. Мы упираемся в операционную систему, становясь ее пленниками, заключенными в тесную клетку со спертым воздухом.
@@ -224,7 +223,7 @@ seg010:DB9F 74 3A		jz	short loc_A9BDB
 
 ===== >>> врезка ссылки по теме =====
 
-  * **BIOSmods:**
+  * **BIOS mods:**
     * портал, посвященный BIOS'у и его доработке (на английском языке): http://www.biosmods.com/;
   * **ROM:**
     * статьи по прошивке и доработке прошивок, уникальный инструментарий (на русском языке): http://www.rom.by;
@@ -235,7 +234,7 @@ seg010:DB9F 74 3A		jz	short loc_A9BDB
   * **Modification of GigaByte GA-586HX BIOS rev 2.9 for support of HDD above 32 GiB:**
     * интересная статья о модификации BIOS, название которой говорит само за себя (на английском языке): http://www.ryston.cz/petr/bios/ga586hx_mod.html;
   * **Award BIOS Reverse Engineering:**
-    * статья известнейшего хакера BIOS'а MappatutuSalihunDarmawan по внедрению своего кода в BIOS (на английском языке):http://www.codebreakers-journal.com/include/getdoc.php?id=83&article=38&mode=pdf;
+    * статья известнейшего хакера BIOS'а Mappatutu Salihun Darmawan по внедрению своего кода в BIOS (на английском языке):http://www.codebreakers-journal.com/include/getdoc.php?id=83&article=38&mode=pdf;
   * **Award BIOS Code Injection:**
     * новые идеи по внедрению своего кода в BIOS (на английском языке): http://www.codebreakers-journal.com/include/getdoc.php?id=127&article=58&mode=pdf;
   * **AWARD BIOS Source:**
@@ -249,7 +248,7 @@ seg010:DB9F 74 3A		jz	short loc_A9BDB
   * **H.Oda's Home Page:**
     * утилита для модификации регистров чипеста на лету: http://www.h-oda.com/;
   * **Award BIOS Editor:**
-    * редактор AwardBIOS'ов, распространяемый с исходными текстами на бесплатной основе: http://awdbedit.sourceforge.net/;
+    * редактор Award BIOS'ов, распространяемый с исходными текстами на бесплатной основе: http://awdbedit.sourceforge.net/;
   * **AWDhack****v****1.3****:**
     * утилита для автоматизированного внедрения своего кода в BIOShttp://webzoom.freewebs.com/tmod/Awdhack.zip;
 

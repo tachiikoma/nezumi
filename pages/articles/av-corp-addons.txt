@@ -1,10 +1,9 @@
-====== av-corp-addons ======
-<sub>{{av-corp-addons.odt|Original file}}</sub>
-
 ====== антивирусы в корпоративной среде\\ (дополнения) ======
+<sub>{{av-corp-addons.odt|Original file}}</sub>
 
 крис касперски, ака мыщъх, no-email
 
+{{INLINETOC}}
 ===== >>> врезка сравнительная характеристика различных антивирусов =====
 
 |*****|**KAV**|**Dr. Web**|**Trend-Micro**|**Symantec**|**NOD32**|**McAfee**|
