@@ -8,6 +8,11 @@
 
 [[:biography:interview:chelovek-kris-kasperski|Человек: Крис Касперски]]
 
+===== 2006 =====
+
+[[:biography:interview:romantichnyj-haker-kris-kasperski|Романтичный хакер Крис Касперски]]
+
+
 ===== 2008 =====
 
 [[:biography:interview:remote-code-execution-through-intel-cpu-bugs|HIRBSecConf 2008. Remote Code Execution Through Intel CPU Bugs]]

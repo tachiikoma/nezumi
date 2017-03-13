@@ -1,4 +1,4 @@
-===== nezumi =====
+===== nezumi - библиотека Криса Касперски =====
 
 {{:project:nezumi.png?nolink&169x250}}
 

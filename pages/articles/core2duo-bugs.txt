@@ -1,12 +1,11 @@
-====== Core2Duo-bugs ======
+====== дефекты проектирования Intel Core 2 Duo – аналитический обзор с точки зрения безопасности ======
 <sub>{{Core2Duo-bugs.odt|Original file}}</sub>
-
-====== дефекты проектирования Intel Core 2 Duo – аналитический обзор с точки зрения безопасности ======
 
 крис касперски, no-email
 
 **процессоры ****Intel Core2Duo (****не только они одни!) содержат множество ошибок, приводящих к сбоям программного обеспечения, зависаниям операционной системе и даже возможности удаленного захвата управления****компьютером! часть ошибок обходится программным путем, часть — обновлением микрокода ЦП или прошивки ****BIOS****, оставшиеся — неисправимы вообще и требуют смены процессора. насколько реальны эти угрозы? попробуем разобраться!**
 
+{{INLINETOC}}
 ===== введение =====
 
 Критикуя Windows (и отчасти Linux),за большое количество программных ошибок, мы "по умолчанию" закладываемся на непорочность аппаратного обеспечения, проектировщики которого _ничем_ не отличаются от разработчиков операционных систем. До тех пор, пока процессоры были простыми (относительно операционных систем), выходили редко и тестировались тщательно — ошибки "кремниевых коней" носили единичный характер и учитывались разработчиками компиляторов. Сейчас они представляют разве что познавательный интерес. Легендарный "Hamarsoft's 86BUGS list", насчитывающий свыше сотни ошибок, недокументированных машинных команд и особенностей их поведения, последний раз обновлялся в 1994 году, после чего отправился на свалку истории, захлебнувшись в потоке дефектов, обнаруженных в первых моделях Pentium-процессоров, причем, ни один из этих дефектов (за исключением знаменитой ошибки деления, описанной в одноименной врезке), до широкой общественности так и не дошел, ограничившись кругом производителей материнских плат, прошивок BIOS, разработчиков операционных систем/компиляторов и прочей технической элитой.
@@ -15,33 +14,23 @@
 
 Кстати, это уже давно не ошибка, а вполне документированная особенность. Intel даже приводит псевдокод команды BSF во втором томе "Instruction Set Reference":
 
-**IF SRC = 0**
+<code>
+IF SRC = 0
+	THEN
+		ZF := 1;
+		DEST is undefined;
+	ELSE
+		ZF := 0;
+		temp := 0;
+	WHILE Bit(SRC, temp) = 0
+	DO
+		temp := temp + 1;
+		DEST := temp;
+	OD;
+FI;
+</code>
 
-**THEN**
-
-**ZF := 1;**
-
-**DEST is undefined;**
-
-**ELSE**
-
-**ZF := 0;**
-
-**temp := 0;**
-
-**WHILE Bit(SRC, temp) = 0**
-
-**DO**
-
-**temp := temp + 1;**
-
-**DEST := temp;**
-
-**OD;**
-
-**FI;**
-
-Листинг 1 псевдокод команды BSF с "узаконенной" ошибкой
+**Листинг 1 псевдокод команды BSF с "узаконенной" ошибкой**
 
 С такими "особенностями" можно еще и смириться, но куда прикажете девать эпизодически возникающими исключениями на 486+, возникающими при загрузке CR3 регистра (указатель на каталог страниц) в регистр общего назначения? Конечно, непредвиденные исключения можно и подавить, что делает Linux и Open-BSD. Делать-то она это делает, но… местами. А местами не делает. Обращение к регистру CR3 происходят из многих функций ядра, а ядро пишет целая армия разработчиков, часть из которых осведомлена об этом дефекте, а часть — даже не подозревает. В результате, мы имеем нестабильно работающую систему.
 
@@ -57,7 +46,7 @@ Windows вообще не пытается сражаться с этим. А з
 
 {{core2duo-bugs_Image_0.png?553}}
 
-Рисунок 1 Intel Core 2 Duo со всеми ошибками, которые в нем только есть
+**Рисунок 1 Intel Core 2 Duo со всеми ошибками, которые в нем только есть**
 
 ===== …и грянул гром =====
 
@@ -67,50 +56,52 @@ Windows вообще не пытается сражаться с этим. А з
 
 Но вернемся к исходному сообщению Theo de Raadt'а, опубликованному в конце июня 2007 года, когда обнаруженных ошибок было вдвое меньше, чем сейчас: http://marc.info/?l=openbsd-misc&m=118296441702631:
 
-List:openbsd-misc
+List:		openbsd-misc\\
+Subject:		Intel Core 2\\
+From:		Theo de Raadt <deraadt () cvs ! openbsd ! org>\\
+Date:		2007-06-27 17:08:16\\
+Message-ID:	200706271708.l5RH8GkK024621 () cvs ! openbsd ! org\\
 
-Subject:Intel Core 2
+----
 
-From:Theo de Raadt <deraadt () cvs ! openbsd ! org>
-
-Date:2007-06-27 17:08:16
-
-Message-ID:200706271708.l5RH8GkK024621 () cvs ! openbsd ! org
-
-Various developers are busy implementing workarounds for serious bugsin Intel's Core 2 cpu.These processors are buggy as hell, and some of these bugs don't justcause development/debugging problems, but will *ASSUREDLY* beexploitable from user-land code.As is typical, BIOS vendors will be very late providing workarounds/fixes for these processors bugs. Some bugs are unfixable and cannotbe worked around. Intel only provides detailed fixes to BIOS vendorsand large operating system groups.  Open Source operating systems arelargely left in the cold.
+Various developers are busy implementing workarounds for serious bugsin Intel's Core 2 cpu.These processors are buggy as hell, and some of these bugs don't just cause development/debugging problems, but will *ASSUREDLY* be exploitable from user-land code.As is typical, BIOS vendors will be very late providing workarounds/fixes for these processors bugs. Some bugs are unfixable and cannot be worked around. Intel only provides detailed fixes to BIOS vendors and large operating system groups.  Open Source operating systems are largely left in the cold.
 
 Full (current) errata from Intel: download.intel.com/design/processor/specupdt/31327914.pdf.
 
-  - We bet there are many more errata not yet announced -- every month this file gets larger.
-  - Intel understates the impact of these erraata very significantly.Almost all operating systems will run into these bugs.
-  - Basically the MMU simply does not operate as specified/implemented in previous generations of x86 hardware.  It is not just buggy, but Intel has gone further and defined "new ways to handle page tables" (see page 58).
-  - Some of these bugs are along the lines of "buffer overflow"; where a write-protect or non-execute bit for a page table entry is ignored. Others are floating point instruction non-coherencies, or memory  corruptions -- outside of the range of permitted writing for the process -- running common instruction sequences.
-  - All of this is just unbelievable to many of us.
+  * We bet there are many more errata not yet announced -- every month this file gets larger.
+  * Intel understates the impact of these erraata very significantly.Almost all operating systems will run into these bugs.
+  * Basically the MMU simply does not operate as specified/implemented in previous generations of x86 hardware.  It is not just buggy, but Intel has gone further and defined "new ways to handle page tables" (see page 58).
+  * Some of these bugs are along the lines of "buffer overflow"; where a write-protect or non-execute bit for a page table entry is ignored. Others are floating point instruction non-coherencies, or memory  corruptions -- outside of the range of permitted writing for the process -- running common instruction sequences.
+  * All of this is just unbelievable to many of us.
 An easier summary document for some people to read:
 
 http://www.geek.com/images/geeknews/2006Jan/core_duo_errata__2006_01_21__full.gif
 
-Note:that some errata like **AI65, AI79, AI43, AI39, AI90, AI99** scarethe hell out of us. Some of these are things that cannot be fixed inrunning code, and some are things that every operating system will dountil about mid-2008, because that is how the MMU has always beenmanaged on all generations of Intel/AMD/whoever else hardware. NowIntel is telling people to manage the MMU's TLB flushes in a new anddifferent way.  Yet even if we do so, some of the errata listed areunaffected by doing so.
+Note:that some errata like **AI65, AI79, AI43, AI39, AI90, AI99** scare the hell out of us. Some of these are things that cannot be fixed in running code, and some are things that every operating system will do until about mid-2008, because that is how the MMU has always been managed on all generations of Intel/AMD/whoever else hardware. Now Intel is telling people to manage the MMU's TLB flushes in a new and different way.  Yet even if we do so, some of the errata listed are unaffected by doing so.
 
-As I said before, hiding in this list are 20-30 bugs that cannot beworked around by operating systems, and will be potentiallyexploitable.  I would bet a lot of money that at least 2-3 of themare.
+As I said before, hiding in this list are 20-30 bugs that cannot be worked around by operating systems, and will be potentially exploitable.  I would bet a lot of money that at least 2-3 of them are.
 
-For instance, AI90 is exploitable on some operating systems (but notOpenBSD running default binaries).
+For instance, AI90 is exploitable on some operating systems (but not OpenBSD running default binaries).
 
-At this time, I cannot recommend purchase of any machines based on theIntel Core 2 until these issues are dealt with (which I suspect willtake more than a year).  Intel must be come more transparent.
+At this time, I cannot recommend purchase of any machines based on the Intel Core 2 until these issues are dealt with (which I suspect will take more than a year).  Intel must be come more transparent.
 
-(While here, I would like to say that AMD is becoming less helpful dayby day towards open source operating systems too, perhaps becausetheir serious errata lists are growing rapidly too).
+(While here, I would like to say that AMD is becoming less helpful day by day towards open source operating systems too, perhaps because their serious errata lists are growing rapidly too).
+
+----
 
 Для не владеющих английским языком ("не владеющим" — в смысле находящихся не в ладах) ниже представлен мой перевод:
+
+----
 
 //В настоящий момент разработчики программного обеспечения и производители железа заняты разработкой "костылей", исправляющих серьезные ошибки в процессорах серии ////Intel Core 2, ////содержащих просто адское количество багов, и некоторых из этих багов не просто мелкие дефекты проектирования, а реальные дыры, которые *НЕСОМНЕННО* могут быть использованы для атак с прикладного уровня. Ряд ошибок невозможно ни исправить, ни найти обходное решения для предотвращения их возникновения. ////Intel ////ограничивается тем, что предоставляет техническую информацию производителям ////BIOS'////ов и ведущим разработчикам коммерческих операционных систем. ////Open-Source ////сообщество брошено на произвол судьбы.//
 
 //Вот полная (текущая) ////errata////: ////download.intel.com/design/processor/specupdt/31327914.pdf (////__прим. переводчика: ссылка битая, т.к. номер спецификации постоянно обновляется и последняя версия может быть найдена по базовой ссылке: http://www.intel.com/design/core2duo/ documentation.htm?iid=prod_core2duo+tab_techdocs#specupdt__////).//
 
-  - //мы готовы биться о заклад, что ошибок на самом деле гораздо больше, чем анонсировано — с каждым месяцем ////errata ////становиться все больше и больше (так оно и оказалось в последствии — прим. КК);//
-  - //Intel ////существенно преуменьшает значимость обнаруженных ошибок — практически все операционные системы вляпаются в эти баги;//
-  - //в сущности ////MMU (Memory Management Unit – ////Блок Управления Памятью) подвергся существенным конструктивным изменениям и работает совсем не так, как в предыдущем поколении ////x86-////процессоров (точнее, теперь он никак не работает — прим. КК). Мало того, что он превратился в сплошное скопище "тараканов", ////Intel ////сделала решительный шаг вперед, определив по ее выражению "новые методы обработки страничных таблиц" (см. стр. 58 — тут правда не совсем понятно, что именно смотреть и где, поиск по фразе в ////Google ////выдает ссылки только на сообщение ////Theo de Raadt'////а, и ни одного документа от самой ////Intel//// — прим. КК);//
-  - //некоторые ошибки имеют прямое отношение к технике "переполнения буферов" (самая популярная разновидность атак на сегодняшний день — прим. КК), где защита от записи или атрибут "неисполняемый" нагло игнорируются процессором. Другие ошибки связаны с некогерентностью (т. е. несогласованностью) инструкций сопроцессора или же производят разрушения памяти — вне области, отведенной в пользование прикладного процессора, посредством "обычных" (т.е. не привилегированных) машинных инструкций;//
-  - //все это кажется совершенно невероятным, но это факт!//
+  * //мы готовы биться о заклад, что ошибок на самом деле гораздо больше, чем анонсировано — с каждым месяцем ////errata ////становиться все больше и больше (так оно и оказалось в последствии — прим. КК);//
+  * //Intel ////существенно преуменьшает значимость обнаруженных ошибок — практически все операционные системы вляпаются в эти баги;//
+  * //в сущности ////MMU (Memory Management Unit – ////Блок Управления Памятью) подвергся существенным конструктивным изменениям и работает совсем не так, как в предыдущем поколении ////x86-////процессоров (точнее, теперь он никак не работает — прим. КК). Мало того, что он превратился в сплошное скопище "тараканов", ////Intel ////сделала решительный шаг вперед, определив по ее выражению "новые методы обработки страничных таблиц" (см. стр. 58 — тут правда не совсем понятно, что именно смотреть и где, поиск по фразе в ////Google ////выдает ссылки только на сообщение ////Theo de Raadt'////а, и ни одного документа от самой ////Intel//// — прим. КК);//
+  * //некоторые ошибки имеют прямое отношение к технике "переполнения буферов" (самая популярная разновидность атак на сегодняшний день — прим. КК), где защита от записи или атрибут "неисполняемый" нагло игнорируются процессором. Другие ошибки связаны с некогерентностью (т. е. несогласованностью) инструкций сопроцессора или же производят разрушения памяти — вне области, отведенной в пользование прикладного процессора, посредством "обычных" (т.е. не привилегированных) машинных инструкций;//
+  * //все это кажется совершенно невероятным, но это факт!//
 //Вот краткий сводный конспект ошибок ////Core2Duo//// для нетехнических людей ////http://www.geek.com/images/geeknews/2006Jan/core_duo_errata__2006_01_21__full.gif//// (тут ////Theo de Raadt//// слегка противоречит сам себе, поскольку приводит конспект _совсем_ другой ////errara////, с _другими_ ошибками, и _другой_ нумераций, поэтому, перечисленные ниже номера ошибок не имеют к нему никакого отношения — прим. КК).//
 
 //Примечание: некоторые ошибки типа ////AI65, AI79, AI43, AI39, AI90, AI99//// пугают нас так, что душа, минуя пятки, спускается прямо в преисподнюю. Эти "штучки" не могут быть исправлены программным путем, т. е. посредством модификации исходного кода операционной системы и/или приложений, и некоторые из них затрагивают все операционные системы, выпущенные до середины 2008 года, поскольку ////MMU ////любых ////Intel/AMD и ////совместимых с ними процессоров всегда управлялся одним и тем же способом. И вот теперь ////Intel ////говорит нам, что ////TLB-////буфера, входящие в состав ////MMU////, должны "сбрасываться" на совершенно иной манер. Но даже сделав это, ошибки процессора, перечисленные в ////errata////, не позволят создать стабильно работающей операционной системы.//
@@ -119,21 +110,27 @@ At this time, I cannot recommend purchase of any machines based on theIntel Core
 
 //Например, ////AI90 ////подходит для атаки на некоторые операционные системы (двоичные сборки ////Open-BSD ////в конфигурации по умолчанию к ним не относятся). В настоящий момент я бы не рекомендовал приобретать машины, построенные на базе ////Intel Core 2////, до тех пор пока дефекты проектирования не будет исправлены (что, по моим подсчетам займет больше года). ////Intel ////должна стать более "прозрачной" (а не зажимать технические детали, рассылая их только разработчикам ////BIOS'////ов и коммерческих операционных систем — прим. КК). Межу тем, мне хотелось бы отметить, что ////AMD ////с каждым днем становиться все менее и менее полезной для ////Open-Source ////сообщества, поскольку количество ошибок, обнаруженных в ее процессорах, растет не менее стремительно.//
 
+----
+
 {{core2duo-bugs_Image_1.png?405}}
 
-Рисунок 2 сводный конспект основных ошибок Core 2 Duo, на который ссылается Theo de Raadt
+**Рисунок 2 сводный конспект основных ошибок Core 2 Duo, на который ссылается Theo de Raadt**
 
 ===== сенсация или реальная угроза? =====
 
 Представляет интерес разобраться, что же так напугало Theo de Raadt'а и насколько велика вероятность атаки на Core 2 Duo, тем более, что за время прошедшее с момента публикации количество обнаруженных ошибок удвоилось. Анализировать ошибки мы будем в порядке, обозначенном Theo de Raadt'ом, с учетом специфики операционных систем семейства NT (Windows 2000, XP, Server 2003/2008, Vista), Linux и линейка BSD – Free, Net и Open, приводя официальную информацию из errata со всеми выкладками и рассуждениями, а местами — сценариями реализации атаки.
 
-==== AI65: A Thermal Interrupt is Not Generated when the Current Temperatureis Invalid (Температурное Прерывание не Генерируется, при Выходе Текущей Температуры за Пределы) ====
+**AI65: A Thermal Interrupt is Not Generated when the Current Temperature is Invalid (Температурное Прерывание не Генерируется, при Выходе Текущей Температуры за Пределы)**
 
-Problem:When the DTS (Digital Thermal Sensor) crosses one of its programmedthresholds it generates an interrupt and logs the event(IA32_THERM_STATUS MSR (019Ch) bits [9,7]). Due to this erratum, if theDTS reaches an invalid temperature (as indicated IA32_THERM_STATUS MSRbit[31]) it does not generate an interrupt even if one of the programmedthresholds is crossed and the corresponding log bits become set.
+----
 
-Implication:When the temperature reaches an invalid temperature the CPU does notgenerate aThermal interrupt even if a programmed threshold is crossed.
+Problem:When the DTS (Digital Thermal Sensor) crosses one of its programmed thresholds it generates an interrupt and logs the event(IA32_THERM_STATUS MSR (019Ch) bits [9,7]). Due to this erratum, if the DTS reaches an invalid temperature (as indicated IA32_THERM_STATUS MSR bit[31]) it does not generate an interrupt even if one of the programmed thresholds is crossed and the corresponding log bits become set.
+
+Implication:When the temperature reaches an invalid temperature the CPU does not generate a Thermal interrupt even if a programmed threshold is crossed.
 
 Workaround:None identified.
+
+----
 
 проблема:когда DTS (Digital Thermal Sensor – Цифровой Температурный Сенсор) достигает одного из установленных пороговых значений, процессор генерирует прерывание, протоколируя его в журнале событий (IA32_THERM_STATUS MSR (019Ch) биты [9,7]). Вследствие конструктивного дефекта, при достижении пороговой температуры (заданной через MSR регистр IA32_THERM_STATUS бит [31]), DTS не генерирует прерывания и не устанавливает биты журнала;
 
@@ -141,19 +138,25 @@ Workaround:None identified.
 
 решение:не найдено;
 
+----
+
 В общем, не такой уж и страшный дефект, хотя… учитывая, что: а) 99% машинного времени процессор "спит", практически не нагреваясь; б) при активной работе одного или нескольких блоков процессора, тепловидение резко возрастет; в) для отвода тепла с крохотной площади приходится применять высокооборотные вентиляторы, характеризующиеся высоким уровнем шума, с которым очень сложно (и дорого!) бороться. Вот производители и перешли на адаптивную схему охлаждения, автоматически повышающую обороты вентилятора при нагреве кристалла и практически останавливающее лопасти во время процессорного сна.
 
 Некоторые производители используют внешний теомодатчик, но большая часть полагается на показания процессора — так и дешевле и точнее, но если DTS не работает, то возникает прямая угроза перегрева кристалла, особенно если хакер загрузит его на полную мощность, что очень легко сделать Java-скрипитом или Flash-роликом. Кратковременный перегрев для ЦП в общем-то не опасен, но вот систематический "перекал" ведет к необратимой деградации кристалла. Первым, как правило, гибнет кэш и система начинает выдавать критические ошибки приложений и выбрасывать голубые экраны смерти.
 
 Таким образом, атаковать систему не нужно. Она и сама умрет через какое-то время.
 
-==== AI79: REP Store Instructions in a Specific Situation may cause theProcessor to Hang (Инструкции Записи с Префиксом REP при Определенных Обстоятельствах могут Завесить ЦП) ====
+**AI79: REP Store Instructions in a Specific Situation may cause theProcessor to Hang (Инструкции Записи с Префиксом REP при Определенных Обстоятельствах могут Завесить ЦП)**
 
-Problem:During a series of REP (repeat) store instructions a store may try to dispatchto memory prior to the actual completion of the instruction. This behaviordepends on the execution order of the instructions, the timing of aspeculative jump and the timing of an uncacheable memory store. All typesof REP store instructions are affected by this erratum.
+----
+
+Problem:During a series of REP (repeat) store instructions a store may try to dispatch to memory prior to the actual completion of the instruction. This behavior depends on the execution order of the instructions, the timing of a speculative jump and the timing of an uncacheable memory store. All types of REP store instructions are affected by this erratum.
 
 Implication:When this erratum occurs, the processor may live lock and/or result in asystem hang.
 
 Workaround:It is possible for BIOS to contain a workaround for this erratum.
+
+----
 
 Проблема:во время выполнения серии инструкций записи, предваренных префиксом REP (REP STOSx/MOVSx), содержимое промежуточного буфера может выгружаться в память до того, как туда поступят актуальные данные. Поведение процессора зависит от порядка выполнения инструкций, временных характеристик "спекулятивных" переходов и временных характеристик некэшируемого буфера записи. Этот дефект распространяется на все операции записи с префиксом REP.
 
@@ -161,25 +164,33 @@ Workaround:It is possible for BIOS to contain a workaround for this erratum.
 
 решение:дефект можно обойти на уровне BIOS;
 
+----
+
 Да… тут есть о чем задуматься. Инструкции REP STOSx/MOVSx относятся к числу самых популярных. Функции инициализации и копирования памяти в большинстве случаев реализованы именно так и работают они как на прикладном, так  и на ядерном уровне. Трудно представить, что произойдет, если вместо записываемых данных в память будет выгружен мусор, случайно оказавшийся в буфере или… умышленно засунутый туда хакером ("Засунутый" в смысле оставшийся от предыдущей серии операций записи).
 
 К сожалению, Intel не раскрывает технических деталей и нам остается только догадываться при каких именно условиях возникает преждевременный "выброс" данных в память. То, что дефект устраним на уровне BIOS, – это хорошо, но вовсе не факт, что за это не придется расплачиваться производительностью (есть подозрение, что BIOS просто изменяет диапазоны временных характеристик таким образом).
 
 Использовать данный дефект для атаки теоретически возможно, но практически для этого необходимо научиться точно воспроизводить условия, при которых происходит преждевременный выброс данных в память. И тогда — хакер сможет с прикладного уровня проникнуть внутрь ядра любой операционной системы и операционная система не в силах этому помешать. Вся надежда на BIOS.
 
-==== AI43: Concurrent Multi-processor Writes to Non-dirty Page May Result in Unpredictable Behavior (Параллельные Записи в "Чистые" Страницы Памяти на Многопроцессорных Системах Ведут к Неопределенному поведению) ====
+**AI43: Concurrent Multi-processor Writes to Non-dirty Page May Result in Unpredictable Behavior (Параллельные Записи в "Чистые" Страницы Памяти на Многопроцессорных Системах Ведут к Неопределенному поведению)**
 
-Problem:When a logical processor writes to a non-dirty page, and another logicalprocessoreither writes to the same non-dirty page or explicitly sets the dirtybit in the corresponding page table entry, complex interaction with internalprocessor activity may cause unpredictable system behavior.
+----
+
+Problem:When a logical processor writes to a non-dirty page, and another logical processor either writes to the same non-dirty page or explicitly sets the dirty bit in the corresponding page table entry, complex interaction with internal processor activity may cause unpredictable system behavior.
 
 Implication:This erratum may result in unpredictable system behavior and hang.
 
 Workaround:It is possible for BIOS to contain a workaround for this erratum.
+
+----
 
 проблема: Когда логический процессор осуществляет запись в "чистую" (т.е. ранее не модифицированную) страницу памяти, а другой логический процессор в это же самое время либо осуществляет запись в эту же страницу или явным образом устанавливает бит модификации в соответствующем поле страничного каталога, "внутриусобные" войны между логическими процессорами, заключенными в один физический кристалл, при определенных обстоятельствах приводят к неопределенному поведению системы.
 
 последствия:данный дефект приводит к непредсказуемому поведению системы и возможному зависанию;
 
 решение:дефект может быть устранен на уровне BIOS;
+
+----
 
 Ох, столько мудрости в этих словах "неопределенное поведение". Инженеры их очень любят. Инженеры вообще любят неожиданности, подстерегающие их в непредвиденных местах. Но чего тут гадать. Все предельно ясно. Флаг модификации, являясь разделяемым ресурсом, весьма придирчив к порядку и все операции с ним должны быть упорядочены теми или иными механизмами синхронизации. Даже не сколько сам этот бит, а его окружение. Модифицировать отдельные биты процессор не обучен и он оперирует машинными словами (длина которых не обязательно равна двум байтам, в данном контексте — это минимальная порция обмена с памятью, которая, на Core 2 Duo по одним данным составляет 16, по другим 32, а по третьим 64 бит). Процессор сначала читает машинное слово целиком в свой внутренний буфер, взводит/сбрасывает один или несколько бит, после чего записывает его обратно. А теперь представим, что процессоров у нас два и они одновременно обращаются к одному и тому же слову. Тогда повторная установка уже установленного бита приведет к его сбросу! Операционная система будет считать, что данная страница не была модифицирована и потому при нехватке памяти не станет выгружать ее в файл подкачки, что приведет к необратимой потери данных!
 
@@ -189,19 +200,25 @@ Workaround:It is possible for BIOS to contain a workaround for this erratum.
 
 Грубым решением проблемы является переход в однопроцессорный режим, что осуществляется добавлением ключа /ONECPU в boot.ini). Конечно, производительность при этом падает, но если целостность данных превыше производительности — это не такая уж и безумная мера. А надеяться, на производителей BIOS… где гарантия, что они действительно справляться с ошибкой?!
 
-==== AI39: Cache Data Access Request from One Core Hitting a Modified Line inthe L1 Data Cache of the Other Core May Cause Unpredictable SystemBehavior (Запрос Кэш-линейки L1-кэша из Одного Ядра Разрушает Модифицированную кэш-линейку Другого Ядра, Приводя к Непредсказуемому Поведению Системы) ====
+**AI39: Cache Data Access Request from One Core Hitting a Modified Line inthe L1 Data Cache of the Other Core May Cause Unpredictable System Behavior (Запрос Кэш-линейки L1-кэша из Одного Ядра Разрушает Модифицированную кэш-линейку Другого Ядра, Приводя к Непредсказуемому Поведению Системы)**
 
-Problem:When request for data from Core 1 results in a L1 cache miss, the request issent to the L2 cache. If this request hits a modified line in the L1 data cacheof Core 2, certain internal conditions may cause incorrect data to be returnedto the Core 1.
+----
+
+Problem:When request for data from Core 1 results in a L1 cache miss, the request is sent to the L2 cache. If this request hits a modified line in the L1 data cache of Core 2, certain internal conditions may cause incorrect data to be returned to the Core 1.
 
 Implication:This erratum may cause unpredictable system behavior.
 
 Workaround:It is possible for the BIOS to contain a workaround for this erratum.
+
+----
 
 проблема:когда запрос данных из Ядра 1 приводит к "промаху" L1-кэша, запрос перенаправляется к L2-кэшу. Если же данная кэш-линейка уже находится в L1-кэше Ядра 2 и была им модифицирована, при определенных обстоятельствах Ядру 1 возвращается неверный результат.
 
 последствия:непредсказуемые поведения системы;
 
 решение:BIOS может справиться с этой проблемой;
+
+----
 
 Как известно, многоядерные процессоры имеют разделяемый (один на всех) L2-кэш и "индивидуальные" L1-кэши, фактически являющиеся частью ядра. В грубом приближении мы имеем обыкновенную многопроцессорную систему с разделяемой внешней памятью и внутрипроцессорной кэш-памятью. Для поддержания памяти в согласованном состоянии используются специальные когерентные протоколы, разработанные десятки лет тому назад. Казалось бы, в чем проблема?!
 
@@ -211,23 +228,29 @@ Workaround:It is possible for the BIOS to contain a workaround for this erratum.
 
 Автору удалось реализовать разрушение кучи (динамической памяти) путем циклического выделения/освобождения крошечных блоков в Java-скрипте, следствием чего явился крах браузера. Чисто теоретически возможно разрушить кучу так, чтобы передать управление на shell-код, но для этого необходимо учитывать множество специфичных деталей, неизвестных удаленному атакующему, хотя в принципе, достаточно предсказуемых.
 
-Шторм запросов к любому драйверу (например, шторм IP-пакетов) так же потенциально способен вызывать крах системы, но, учитывая, что шторма зачастую вызывают BSOD'ыдаже на "правильных" процессорах (из-за ошибок синхронизации, допущенных разработчиками драйверов), очень трудно определить с каким дефектом мы имеем дело: с программным или аппаратным. Тем не менее, хакерский потенциал у атак данного типа весьма весомый, что главным образом, обуславливается простотой их реализации.
+Шторм запросов к любому драйверу (например, шторм IP-пакетов) так же потенциально способен вызывать крах системы, но, учитывая, что шторма зачастую вызывают BSOD'ы даже на "правильных" процессорах (из-за ошибок синхронизации, допущенных разработчиками драйверов), очень трудно определить с каким дефектом мы имеем дело: с программным или аппаратным. Тем не менее, хакерский потенциал у атак данного типа весьма весомый, что главным образом, обуславливается простотой их реализации.
 
 Самое непонятное в этой истории — какое отношение имеет BIOS с "разборкам" внутри процессора?! Единственное разумное предположение — BIOS просто заливает обновленный микрокод, предоставленный Intel. По другому справиться с проблемой навряд ли получится.
 
-==== AI90: Page Access Bit May be Set Prior to Signaling a Code Segment Limit Fault (Атрибут Доступа к Странице Памяти Может Быть Установлен до Генерации Исключения) ====
+**AI90: Page Access Bit May be Set Prior to Signaling a Code Segment Limit Fault (Атрибут Доступа к Странице Памяти Может Быть Установлен до Генерации Исключения)**
 
-Problem:If code segment limit is set close to the end of a code page, then due to thiserratum the memory page Access bit (A bit) may be set for the subsequentpage prior to general protection fault on code segment limit;
+----
 
-Implication:When this erratum occurs, a non-accessed page which is present in memoryand follows a page that contains the code segment limit may be tagged asaccessed;
+Problem:If code segment limit is set close to the end of a code page, then due to this erratum the memory page Access bit (A bit) may be set for the subsequent page prior to general protection fault on code segment limit;
 
-Workaround:Erratum can be avoided by placing a guard page (non-present or nonexecutablepage) as the last page of the segment or after the page thatincludes the code segment limit;
+Implication:When this erratum occurs, a non-accessed page which is present in memory and follows a page that contains the code segment limit may be tagged as accessed;
+
+Workaround:Erratum can be avoided by placing a guard page (non-present or nonexecutable page) as the last page of the segment or after the page that includes the code segment limit;
+
+----
 
 проблема:если лимит сегмента кода установлен близко к концу кодовой страницы, то при определенных обстоятельствах следующей за ней странице памяти процессор может назначить атрибут доступа _до_ генерации исключения общего нарушения защиты или выхода за пределы лимитов кодового сегмента;
 
 последствия:при проявлении данного дефекта, страница памяти, следующая за последней страницей кодового сегмента, получает атрибут доступа, даже если изначально она была недоступна для чтения;
 
 решение:пагубное влияние данного дефекта может быть нейтрализовано путем установки сторожевой страницы (отсутствующей в памяти или неисполняемой), отделяющей кодовый сегмент от последующего за ним семена;
+
+----
 
 Вот мы и добрались до дефекта, особо отмеченного Theo de Raadt'ом, в качестве подходящего кандидата для атаки на операционные системы (за исключением Open-BSD в конфигурации по умолчанию). Что же это за операционные системы такие?! Ну-ка, ну-ка! В NT лимиты сегментов кода, данных и стека "распахнуты" на все адресное пространство, нижнюю половину которого занимает прикладной код, верхнюю — операционная система. Так что за пределами кодового сегмента вообще ничего нет. Да и чтобы добраться до его конца необходимо сначала как-то попасть на уровень ядра, где можно делать что угодно и без всяких дефектов процессора (правда, в Core2Duo есть еще один интересный дефект, обнаруженный автором и не описанный в последней errata – при выполнении кусочка инструкции, находящегося в самом конце кодового сегмента, декодер, определяя длину инструкции по первым байтам, пытается считать ее продолжение, которого нет, в результате чего происходит "заворот" в начало сегмента, первой странице которого так же присваивается атрибут доступа, после чего генерируется исключение, которое хакеру необходимо отловить, чтобы система не свалилась в BSOD, но что это даст?! младшие страницы адресного пространства специально сделаны недоступными в NT для отлова обращения по нулевым указателям, свидетельствующих о том, что программа обращается к невыделенной области памяти, и Windows передает ей исключение, которая та может обработать тем или иным образом, но чаще всего обработчик конструктивно непредусмотрен и тогда система завершает работу приложения в аварийном режиме. Установка атрибута доступа на первую страницу приведет к подавлению исключения и программа упадает не в момент обращения к нулевому указателю, а чуть позже — когда попытается обработать считанный оттуда мусор. Не слишком-то большое достижение, к тому же легко реализуемое на прикладном уровне без обращения к дефектам процессора).
 
@@ -239,35 +262,41 @@ Workaround:Erratum can be avoided by placing a guard page (non-present or nonexe
 
 {{core2duo-bugs_Image_2.png?524}}
 
-Рисунок 3 Windows использует "плоскую" модель памяти с "распахнутыми" границами сегментов
+**Рисунок 3 Windows использует "плоскую" модель памяти с "распахнутыми" границами сегментов**
 
-==== AI99: Updating Code Page Directory Attributes without TLB Invalidation May Result in Improper Handling of Code #PF (Обновление Атрибутов Директории Кодовых Страниц без "Инвалидации" TLB Может Привести к Некорректной Обработке Исключения #PF) ====
+**AI99: Updating Code Page Directory Attributes without TLB Invalidation May Result in Improper Handling of Code #PF (Обновление Атрибутов Директории Кодовых Страниц без "Инвалидации" TLB Может Привести к Некорректной Обработке Исключения #PF)**
+
+----
 
 Problem:Code #PF (Page Fault exception) is normally handled in lower priority order relative to both code #DB (Debug Exception) and code Segment Limit Violation #GP (General Protection Fault). Due to this erratum, code #PF maybe handled incorrectly, if all of the following conditions are met:
 
-  - A PDE (Page Directory Entry) is modified without invalidating the corresponding TLB (Translation Look-aside Buffer) entry
-  - Code execution transitions to a different code page such that both
-    - The target linear address corresponds to the modified PDE
-    - The PTE (Page Table Entry) for the target linear address has an A (Accessed) bit that is clear
-  - One of the following simultaneous exception conditions is present following the code transition
-    - Code #DB and code #PF
-    - Code Segment Limit Violation #GP and code #PF
+  * A PDE (Page Directory Entry) is modified without invalidating the corresponding TLB (Translation Look-aside Buffer) entry
+  * Code execution transitions to a different code page such that both
+    * The target linear address corresponds to the modified PDE
+    * The PTE (Page Table Entry) for the target linear address has an A (Accessed) bit that is clear
+  * One of the following simultaneous exception conditions is present following the code transition
+    * Code #DB and code #PF
+    * Code Segment Limit Violation #GP and code #PF
 Implication:Software may observe either incorrect processing of code #PF before code Segment Limit Violation #GP or processing of code #PF in lieu of code #DB.
 
 Workaround:None identified.
 
+----
+
 проблема:исключение #PF (Page Fault – Страничный Отказ) обычно обрабатывается в с другими исключениями, перечисленными в порядке уменьшения приоритета: #DB (Debug Exception — Отладочное Исключение), Segment Limit Violation (Исключение Выхода за Пределы Сегмента), #GP (General Protection Fault — Общее Нарушение Защиты). Вследствие дефекта проектирования, #PF исключение обрабатывается некорректно, при наступлении одного из следующих событий:
 
-  - PDE (Page Directory Entry — Запись Каталога Страниц) модифицируется без "инвалидации" (to invalidate — делать недействительным)соответствующей  записи TLB (Translation Look-aside Buffer – Буфер Обратной Трансляции);
-  - транзакция исполнения машинной инструкции, находится на стыке двух страниц, причем, выполняется одно из следующих условий:
-    - линейный целевой адрес соответствует модифицированной PDE; 
-    - PTE (Page Table Entry – Запись Таблицы Страниц) для целевого линейного адреса имеет сброшенный бит доступа;
-  - транзакции предшествует одно из двух следующих исключений:
-    - #DB и #PF;
-    - #GP и #PF;
+  * PDE (Page Directory Entry — Запись Каталога Страниц) модифицируется без "инвалидации" (to invalidate — делать недействительным)соответствующей  записи TLB (Translation Look-aside Buffer – Буфер Обратной Трансляции);
+  * транзакция исполнения машинной инструкции, находится на стыке двух страниц, причем, выполняется одно из следующих условий:
+    * линейный целевой адрес соответствует модифицированной PDE; 
+    * PTE (Page Table Entry – Запись Таблицы Страниц) для целевого линейного адреса имеет сброшенный бит доступа;
+  * транзакции предшествует одно из двух следующих исключений:
+    * #DB и #PF;
+    * #GP и #PF;
 последствия:программное обеспечение должно либо отслеживать некорректное #PF исключение, предшествующее #GP исключению, так же как #PF исключение перед #DB.
 
 Workaround:не найдено.
+
+----
 
 Наконец-то мы добрались до дефекта, который Theo de Raadt характеризует как "ну вот, теперь нам Intel говорит, что TLB нужно обрабатывать совершенно иным путем, не похожим на старый". Ох и врет! Intel ничего такого не говорит, признавая за собой дефект и расписываясь в бессилии найти приемлемое обходное решение. Дефект, конечно, серьезный и остается только удивляться как существующие операционные системы ухитряются работать на Core 2 Duo не падать каждые шесть-семь минут (хотя, возможно, они и падают, но не так часто).
 
