@@ -12,3 +12,9 @@
 
 [[:articles:polinomialnaya-arifmetika-i-polya-galua-ili-informaciya-voskresshaya-iz-pepla-ii|polinomialnaya-arifmetika-i-polya-galua-ili-informaciya-voskresshaya-iz-pepla-ii]]
 
+=== философия и архитектура NT против UNIX с точки зрения безопасности ===
+
+Существует мнение, что распространение электронно-вычислительных машин привнесло больше проблем, чем их решило. Человечество в своей массе ни морально, ни этически, ни психологически ко всему этому оказалось просто не готово и компьютерная техника попала в руки к людям, чей интеллект направлен лишь на разрушение. И если до появления Интернета вирусная угроза в основном сводилась к проблеме "грязных рук" и беспорядочного копирования ПО, то сейчас ситуация существенно изменилась…
+
+[[:articles:filosofiya-i-arhitektura-nt-protiv-unix-s-tochki-zreniya-bezopasnosti|filosofiya-i-arhitektura-nt-protiv-unix-s-tochki-zreniya-bezopasnosti]]
+
