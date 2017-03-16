@@ -1,29 +1,29 @@
 ====== dddw ======
 <sub>{{dddw.odt|Original file}}</sub>
 
-==== выносинвариантов/Loop-invariant code motion / ====
+{{INLINETOC}}
+==== вынос инвариантов/Loop-invariant code motion / ====
 
 Loop-invariant code motion The loop-invariant code motion optimization recognizes instructions inside a loop whose results do not change and then moves the instructions outside the loop. This optimization ensures that the invariant code is only executed once.
 
 For example, the C/C++ code:
 
+<code c>
 x = z;
-
 for(i=0; i<10; i++)
+	a[i] = 4 * x + i;
+</code>
 
-a[i] = 4 * x + i;
+**Листинг 1 **
 
-Листинг 1 
-
+<code c>
 x = z;
-
 t1 = 4 * x;
-
 for(i=0; i<10; i++)
+	a[i] = t1 + i;
+</code>
 
-a[i] = t1 + i;
-
-Листинг 2 
+**Листинг 2 **
 
 gcc{
 
@@ -47,23 +47,21 @@ Strip mining is a fundamental +O3 transformation. In and of itself, strip mining
 
 Strip mining involves splitting a single loop into a nested loop. The resulting inner loop iterates over a section or strip of the original loop, and the new outer loop runs the inner loop enough times to cover all the strips, achieving the necessary total number of iterations. The number of iterations of the inner loop is known as the loop's strip length. Consider the following Fortran code:
 
+<code fortran>
 DO I = 1, 10000
-
-A(I) = A(I) * B(I)
-
+	A(I) = A(I) * B(I)
 ENDDO
+</code>
 
 Strip mining this loop using a strip length of 1000 yields the following loop nest:
 
+<code fortran>
 DO IOUTER = 1, 10000, 1000
-
-DO ISTRIP = IOUTER, IOUTER+999
-
-A(ISTRIP) = A(ISTRIP) * B(ISTRIP)
-
+	DO ISTRIP = IOUTER, IOUTER+999
+		A(ISTRIP) = A(ISTRIP) * B(ISTRIP)
+	ENDDO
 ENDDO
-
-ENDDO
+</code>
 
 In this loop, the strip length integrally divides the number of iterations, so the loop is evenly split up. If the iteration count was not an integral multiple of the strip length, for example, if I went from 1 to 10500 rather than 1 to 10000, the final iteration of the strip loop would execute 500 iterations instead of 1000.
 
@@ -71,15 +69,15 @@ In this loop, the strip length integrally divides the number of iterations, so t
 
 Ветвления внутри циклов всегда нежелательны, а на старших моделях микропроцессоров Intel – особенно (кстати, большинство Си компиляторов платформы CONVEX вообще отказываются компилировать программы с ветвлениями внутри циклов).
 
-Уникальной особенностью компилятора MicrosoftVisualC++ является его умение избавляться от некоторых типов внутрицикловых ветвлений. Алгоритм подобной оптимизации слишком сложен, чтобы быть описанным в рамках журнальной статьи, поэтому, просто рассмотрим пример кода до и после оптимизации, а любопытных отошлем к книгам "Техника дизассемблирования программ" и "Техника оптимизации программ" Криса Касперски.
+Уникальной особенностью компилятора Microsoft Visual C++ является его умение избавляться от некоторых типов внутрицикловых ветвлений. Алгоритм подобной оптимизации слишком сложен, чтобы быть описанным в рамках журнальной статьи, поэтому, просто рассмотрим пример кода до и после оптимизации, а любопытных отошлем к книгам "Техника дизассемблирования программ" и "Техника оптимизации программ" Криса Касперски.
 
 ==== Peephole optimizations ====
 
+<code>
 // msvc: no
-
 // icl:no
-
 // gcc:no
+</code>
 
 A peephole optimization is a machine-dependent optimization that makes a pass through low-level assembly-like instruction sequences of the program, applying patterns to a small window (peephole) of code looking for optimization opportunities. The optimizations performed are:
 
@@ -109,311 +107,264 @@ by specifying the +Onoinline command-line option.
 
 ==== устранениезависимостей loop-carried dependences (LCD) ====
 
+<code>
 // msvc: yes
-
 // icl: yes
-
 // gcc: yes
+</code>
 
+<code c>
 for(i=1; i<n; i++)
+	for (j=1; j<m; j++)
+		a[j][i]=a[j-1][i-1] + a[j+1][i-1];
+</code>
 
-for (j=1; j<m; j++)
+**Листинг 3**
 
-a[j][i]=a[j-1][i-1] + a[j+1][i-1];
-
-Листинг3
-
+<code c>
 for(j=1; j<m; j++)
+	for (i=1;i <n; i++)
+		a[j][i]=a[j+1][i-1] + a[j-1][i-1];
+</code>
 
-for (i=1;i <n; i++)
-
-a[j][i]=a[j+1][i-1] + a[j-1][i-1];
-
-Листинг4
+**Листинг 4**
 
 ==== Loop tiling ====
 
+<code>
 // msvc: no
-
 // icl: no
-
 // gcc: no
+</code>
 
 Loop tiling is a powerful high-level loop optimization technique useful for memory hierarchy optimization [14]. See the matrix multiplication program fragment:
 
+<code c>
 for (i = 0; i < N; i++)
-
-for (j = 0; j < N; j++)
-
-for (k = 0; k < N; k++)
-
-c[i][j] = c[i][j] + a[i][k] * b[k][j];
+	for (j = 0; j < N; j++)
+		for (k = 0; k < N; k++)
+			c[i][j] = c[i][j] + a[i][k] * b[k][j];
+</code>
 
 Два последовательные обращения к одному и тому же элементу массива "a", происходят через каждые N операций умножения-и-сложения. Два последовательные обращения к одному и тому же элементу массива "b", происходят через каждые N*N операций умножения-и-сложения. Два последовательные обращения к одному и тому же элементу массива "с", происходят через каждую операцию умножения-и-сложения.
 
 Two successive references to the same element of a are separated by N multiply-and-sum operations. Two successive references to the same element of b are separated by N2 multiply-and-sum operations. Two successive references to the same element of c are separated by 1 multiply-and-sum operation. For the case when N is large, references to a and b exhibits little locality and the frequent data fetching from memory results in high power consumption. Tiling the loop will transforme it to:
 
+<code c>
 for (i = 0; i < N; i+=T)
-
-for (j = 0; j < N; j+=T)
-
-for (k = 0; k < N; k+=T)
-
-for (ii = i; ii < min(i+T, N); ii++)
-
-for (jj = j; jj < min(j+T, N); jj++)
-
-for (kk = k; kk < min(k+T, N); kk++)
-
-c[ii][jj] = c[ii][jj] + a[ii][kk] * b[kk][jj];
+	for (j = 0; j < N; j+=T)
+		for (k = 0; k < N; k+=T)
+			for (ii = i; ii < min(i+T, N); ii++)
+				for (jj = j; jj < min(j+T, N); jj++)
+					for (kk = k; kk < min(k+T, N); kk++)
+						c[ii][jj] = c[ii][jj] + a[ii][kk] * b[kk][jj];
+</code>
 
 ==== Blocking example: simple loop ====
 
+<code>
 // msvc:no
-
 // icl: no
-
 // gcc: no
+</code>
 
 In order to exploit reuse in more realistic examples that manipulate arrays that will not all fit in the cache, the compiler can apply the blocking transformation.
 
 Consider the following Fortran example:
 
+<code fortran>
 REAL*8 A(1000,1000),B(1000,1000)
-
 REAL*8 C(1000),D(1000)
-
 COMMON /BLK2/ A, B, C
-
 .
-
 DO J = 1, 1000
-
-DO I = 1, 1000
-
-A(I,J) = B(J,I) + C(I) + D(J)
-
+	DO I = 1, 1000
+		A(I,J) = B(J,I) + C(I) + D(J)
+	ENDDO
 ENDDO
-
-ENDDO
+</code>
 
 Now the compiler moves the outer strip loop (IOUT) outward as far as possible.
 
+<code fortran>
 DO IOUT = 1, 1000, IBLOCK
-
-DO J = 1, 1000
-
-DO I = IOUT, IOUT+IBLOCK-1
-
-A(I,J) = B(J,I) + C(I) + D(J)
-
+	DO J = 1, 1000
+		DO I = IOUT, IOUT+IBLOCK-1
+		A(I,J) = B(J,I) + C(I) + D(J)
+		ENDDO
+	ENDDO
 ENDDO
 
-ENDDO
 
-ENDDO
 
 do i = 1,n
-
 do j = 1,m
-
 B(j,i) = A(i,j)
-
+end do
 end do
 
-end do
+
 
 do j1 = 1,n-nb+1,nb
-
 j2 = min(j1+nb-1,n)
-
 do i1 = 1,m-nb+1,nb
-
 i2 = min(i1+nb-1,m)
-
 do i = i1, i2
-
 do j = j1, j2
-
 B(j,i) = A(i,j)
-
 end do
-
 end do
-
 end do
-
 end do
 
 _
 
 DO I=1,N
-
 …. (I) ….
-
 ENDDO
 
 DO i1=1,N,nb
-
- DO I=i1,min(i1+nb-1,N)
-
+   DO I=i1,min(i1+nb-1,N)
 :. (I) :.
-
 ENDDO ENDDO
+</code>
 
 ==== Loop Skewing ====
 
+<code>
 // msvc: no
-
 // icl: no
-
 // gcc: no
+</code>
 
 Original Code
 
+<code c>
 int i, s[N], a[N][N];
-
 for(i=1; i<N-1; i++;)
-
-for(j=1; j<N-1; j++;)
-
-{
-
-a[i,j] = (a[i-1,j] + a[i,j-1] + a[i+1,j] + a[i,j+1]) / 4;
-
-}
+	for(j=1; j<N-1; j++;)
+	{
+		a[i,j] = (a[i-1,j] + a[i,j-1] + a[i+1,j] + a[i,j+1]) / 4;
+	}
+</code>
 
 After Loop Skewing
 
+<code c>
 int i, s[N], a[N][N];
-
 for(i=1; i<N-1; i++;)
-
 for(j=i+1; j<i+N-1; j++;)
-
 {
-
 a[i,j-i] = (a[i-1,j-i] + a[i,j-1-i] + a[i+1,j-i] + a[i,j+1-i])/4;
-
 }
+</code c>
 
 " Skewed Space
-
 " Both loop can now be parallelized
-
 " A Loop Interchange is needed
 
+<code fortran>
 DO I=1,3
-
 DO J=1,3
-
 A(I, 2*J) = J
-
 END DO
-
 END DO
+</code>
 
-Figure 7: Original loop
+**Figure 7: Original loop**
 
+<code fortran>
 DO U=1,3
-
 DO V=U + 1,U + 3
-
 A(U, 2*(V-U)) = 2*(V-U)
-
 END DO
-
 END DO
+</code>
 
-==== Cachethrashing ====
+==== Cache thrashing ====
 
-==== сокращениесложностивычислений/Strength reduction of induction variables and constants ====
+==== сокращение сложности вычислений/Strength reduction of induction variables and constants ====
 
+<code>
 // msvc: yes
-
 // icl: yes
-
 // gcc: yes
+</code>
 
+<code c>
 for (a=0; a<0x69; a++) r[a] = a * n;
+</code>
 
-Листинг5 
+**Листинг 5**
 
->->
+%%>->%%
 
+<code c>
 t1 = 0; for (i=0; i<25; i++) { r[i] = t1; t1 += k; }
+</code>
 
 замена умножения делением
 
+<code c>
 for (i=0;i<n;i++)
-
 b[i] = a[i]/s
 
 rs=1/s
-
 for (i=0;i<n;i=i+1)
-
 {b[i] = a[i]*rs
-
 b[i+1] = a[i+1]*rs}
+</code>
 
+<code>
 // msvc:no
-
 // icl:no
-
 // gcc:no
+</code>
 
-==== снижение сложности вычислений CodeMotion ====
+==== снижение сложности вычислений Code Motion ====
 
+<code>
 // msvc: yes
-
 // icl: yes, may be
-
 // gcc: yes, may be
+</code>
 
+<code c>
 for (i = 0; i < n; i++)
+  for (j = 0; j < n; j++)
+    a[n*i + j] = b[j];
 
- for (j = 0; j < n; j++)
-
- a[n*i + j] = b[j];
 
 for (i = 0; i < n; i++) {
-
- int ni = n*i;
-
- for (j = 0; j < n; j++)
-
- a[ni + j] = b[j];
-
+  int ni = n*i;
+  for (j = 0; j < n; j++)
+    a[ni + j] = b[j];
 }
+</code>
 
-==== "сокращениесложности"/Reduction in Strength ====
+==== "сокращение сложности"/Reduction in Strength ====
 
 This optimization also replaces multiplication instructions with addition instructions wherever possible.
 
 For example, in the following C/C++ code:
 
+<code c>
 for (i=0; i<0x69; i++)
-
 {
-
-r[i] = i * k;
-
+	r[i] = i * k;
 }
+</code>
 
->>>
+%%>>>%%
 
+<code c>
 t1 = 0;
-
 for (i=0; i<0x69; i++)
-
 {
-
-r[i] = t1;
-
-t1 += k;
-
+	r[i] = t1;
+	t1 += k;
 }
+</code>
 
 gcc{
 
