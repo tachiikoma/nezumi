@@ -1,5 +1,5 @@
   * [[:books|Книги]]
-  * [[:articles.lite|Статьи]]
+  * [[:articles|Статьи]]
   * Проект
     * [[:project|О проекте]]
     * [[:project:discussion|Обсуждение]]
