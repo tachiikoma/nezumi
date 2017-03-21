@@ -1,0 +1,63 @@
+====== fix_wiki_article.pl ======
+
+Скрипт для первичного форматирования статьи:
+  * первый заголовок (название файла статьи) заменяется вторым заголовком (название статьи);
+  * вставляется оглавление (table of contents);
+  * подписи к листингам, рисункам и таблицам выделяются жирным.
+
+<code perl>
+# fix_article_wiki.pl
+
+use strict;
+use warnings;
+use utf8::all;
+
+my $result = "";
+
+# Skip the first line
+while (<>) { 
+    last;
+}
+
+my $first_header_fixed = 0;
+my $table_of_contents_inserted = 0;
+my $remove_next_line = 0;
+while (<>) {
+    chomp;
+
+    if ($remove_next_line) {
+        $remove_next_line = 0;
+        next;
+    }
+
+    if ($_ =~ /^======/ and !$first_header_fixed) {
+        # The first header should be moved to the top of the document
+        $result = $_ . "\n" . $result;
+        $first_header_fixed = 1;
+        $remove_next_line = 1;
+        next;
+
+    } elsif ($_ =~ /^=====/ and !$table_of_contents_inserted) {
+        # Insert TOC before the second header
+        $result = $result . "{{INLINETOC}}\n" . $_ . "\n";
+        $table_of_contents_inserted = 1;
+        next;
+
+    } elsif ($_ =~ /^[Лл]истинг / or $_ =~ /^[Рр]исунок / or $_ =~ /^[Тт]аблица /) {
+        # Bold out code/picture/table description
+        $result = $result . "**" . $_ . "**\n";
+        next;
+
+    } else {
+        $result .= $_ . "\n";
+    }
+}
+
+print $result;
+</code>
+
+Запуск:
+<code>
+$ perl fix_wiki_article.pl <article_in >article_out
+</code>
+В файл article_in копируем всю статью с разметкой DokuWiki, результат берём из article_out, копируем на вики и работаем уже с этим.

@@ -16,7 +16,9 @@
       * [[https://play.google.com/store/books/author?id=Kris+Kaspersky|https://play.google.com/store/books/author?id=Kris+Kaspersky]]
   - Найти и исправить в статьях слова на английском и русском, слившиеся при импорте в одно.
 
-=====   =====
+====== Скрипты ======
+
+  - [[https://nezumi.cyberpunk.us/scripts/fix_wiki_article|Первичная обработка статьи]]
 
 ~~DISCUSSION~~
 
