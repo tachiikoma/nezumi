@@ -1,8 +1,7 @@
-====== vista.stuff ======
+====== исследование Windows Vista/Server Longhorn ======
 <sub>{{vista.stuff.odt|Original file}}</sub>
 
-====== исследование Windows Vista/Server Longhorn ======
-
+{{INLINETOC}}
 ===== real changes =====
 
 # что нового
@@ -33,7 +32,7 @@ http://en.wikipedia.org/wiki/Development_of_Windows_Vista
 
 NT security is done with DAC: Discretionary Access Control, using ACLs: Access Control Lists. (Vista supports M(andatory)AC too)
 
-искать MAC
+→искать MAC
 
 ??? ZwSystemDebugControl
 
@@ -41,9 +40,9 @@ http://www.securiteam.com/windowsntfocus/5TP0B2KC0K.html
 
 n[[http://www.tinykrnl.org/recon2k6.pdf|http://www.tinykrnl.org/recon2k6.pdf]]
 
-Removing access to \Device\PhysicalMemory caused compatibility breaks with legitimate software that needed access to SMBios, ACPI, BIOS/Video ROMs, etc.
+* Removing access to \Device\PhysicalMemory caused compatibility breaks with legitimate software that needed access to SMBios, ACPI, BIOS/Video ROMs, etc.
 
-SP1 added two new APIs to handle them: EnumSystemFirmwareTables and GetSystemFirmwareTable.
+* SP1 added two new APIs to handle them: EnumSystemFirmwareTables and GetSystemFirmwareTable.
 
 ==== Memory Manager ====
 
@@ -53,15 +52,15 @@ n[[http://www.tinykrnl.org/recon2k6.pdf|http://www.tinykrnl.org/recon2k6.pdf]]
 
 Significant enhancements were made throughout the memory manager in Windows Vista and Windows Server Longhorn. Changes include:
 
-  - /* vista */ Improvements to dynamic system address space, including on-demand allocation of system virtual address space and kernel page table pages, and support for very large registries. Instead of at boot time based registry & configuration information. Region sizes bounded only by VA limitations: Applies to non-paged, paged, session space, mapped views, etc. Kernel page tables allocated on demand, No longer preallocated at system boot, saves (1.5MB on x86 systems, 3MB on PAE systems, 16MB to 2.5GB on 64-bit machines)
-  - /* Server 2003 SP1, vista enhancement */Enhanced support for nonuniform memory architecture (NUMA) systems and systems with large pages, including additional device driver and Microsoft Win32® NUMA application program interfaces (APIs). VirtualAllocExNuma, CreateFileMappingExNuma, MapViewOfFileExNuma. Example: Hewlett-Packard Superdome 1TB gaps between chunks of physical memory
-    - http://en.wikipedia.org/wiki/Non-Uniform_Memory_Access\\ Non-Uniform Memory Access and Non-Uniform Memory Architecture (NUMA) is a computer memory design used in multiprocessors, where the memory access time depends on the memory location relative to a processor. Under NUMA, a processor can access its own local memory faster than non-local memory, that is, memory local to another processor or memory shared between processors.
-  - /* vista */  Advanced video model support through a new mapping type called rotate virtual address descriptors (VADs). Dramatically different video architecture \\ in Windows Vista  More fully exploits modern GPUs & virtual memory  MM provides new mapping type  Rotate virtual address descriptors (VADs) Allow video drivers to quickly switch user views from regular application memory into Cached, non-cached, write combined AGP or video RAM mappings  Allows video architecture to use GPU to rotate unneeded clients in and out on demand First time Windows-based OS has supported fully pageable mappings w/ arbitrary cache attributes
-  - /* vista */ I/O and section access improvements, including pervasive prefetch-style clustering for all types of page faults and system cache read-ahead. Significant changes in pagefile writing, Larger clusters up to 4GB, Align near neighbors, Sort by virtual address (VA), Reduced fragmentation, Improved reads, Cache manager read ahead size limitations in thread structure removed, Improved synchronization between cache manager and memory manager data flushing to maximize filesystem/disk throughput and efficiency. Mapped file writing and file flushing performance increases, Support for writes of any size up to 4GB instead of previous 64k limit per write, Multiple asynchronous flushes can be issued, both internally and by the caller, to satisfy a single call, Pagefile fragmentation improvements, On dirty bit faults, we use interlocked queuing operation to free the pagefile space of the corresponding page, Avoids PFN lock acquisitions, Reduces needless pagefile fragmentation, Elimination of pagefile writes and potential subsequent re-reads of completely zero pages,Check pages at trim time to see if they are all zero,Optimization used to make this nearly free,User virtual address used to check for the first and last ULONG_PTR being zero; if they both are, then,After the page is trimmed, and TLB invalidated, a kernel mapping used to make the final check of the entire page,Avoids needless scans & TLB flushes,We've measured over 90% success rate with this algorithm, Access to large section performance increases,A subsection is the name of the data structure used to describe on-disk file spans for sections ,The subsection structure was converted,From a singly linked (i.e., linear walk required),To a balanced AVL tree,Enables huge performance gain for sections mapping large files,User mappings & flushes, system cache mappings, flushes & purges, section-based backups, etc,Mapped page writer does flushing based on a sweep hand,Data is written out much sooner than the prior 5 minute "flush everything" model,
-  - /* vista */ I/O Reduced data loss in the face of crashes, Flush all modified data to its backing store (local & remote) if we are going to bugcheck due to a failed inpage,Only failed inpages of kernel and/or drivers are fatal,Failed inpages of user process code/data merely results in an inpage exception being handed to the application
-  - General performance improvements, including translation buffer optimizations and improvements to internal data structures and algorithmic performance.
-  - /* vista */ Microsoft Terminal Services improvements, including new Terminal Services session objects.
-  - /* vista */ Robustness and diagnosability improvements, including reduced data loss from failed in-page operations.
+  * /* vista */ Improvements to dynamic system address space, including on-demand allocation of system virtual address space and kernel page table pages, and support for very large registries. Instead of at boot time based registry & configuration information. Region sizes bounded only by VA limitations: Applies to non-paged, paged, session space, mapped views, etc. Kernel page tables allocated on demand, No longer preallocated at system boot, saves (1.5MB on x86 systems, 3MB on PAE systems, 16MB to 2.5GB on 64-bit machines)
+  * /* Server 2003 SP1, vista enhancement */Enhanced support for nonuniform memory architecture (NUMA) systems and systems with large pages, including additional device driver and Microsoft Win32® NUMA application program interfaces (APIs). VirtualAllocExNuma, CreateFileMappingExNuma, MapViewOfFileExNuma. Example: Hewlett-Packard Superdome 1TB gaps between chunks of physical memory
+    * http://en.wikipedia.org/wiki/Non-Uniform_Memory_Access\\ Non-Uniform Memory Access and Non-Uniform Memory Architecture (NUMA) is a computer memory design used in multiprocessors, where the memory access time depends on the memory location relative to a processor. Under NUMA, a processor can access its own local memory faster than non-local memory, that is, memory local to another processor or memory shared between processors.
+  * /* vista */  Advanced video model support through a new mapping type called rotate virtual address descriptors (VADs). Dramatically different video architecture \\ in Windows Vista  More fully exploits modern GPUs & virtual memory  MM provides new mapping type  Rotate virtual address descriptors (VADs) Allow video drivers to quickly switch user views from regular application memory into Cached, non-cached, write combined AGP or video RAM mappings  Allows video architecture to use GPU to rotate unneeded clients in and out on demand First time Windows-based OS has supported fully pageable mappings w/ arbitrary cache attributes
+  * /* vista */ I/O and section access improvements, including pervasive prefetch-style clustering for all types of page faults and system cache read-ahead. Significant changes in pagefile writing, Larger clusters up to 4GB, Align near neighbors, Sort by virtual address (VA), Reduced fragmentation, Improved reads, Cache manager read ahead size limitations in thread structure removed, Improved synchronization between cache manager and memory manager data flushing to maximize filesystem/disk throughput and efficiency. Mapped file writing and file flushing performance increases, Support for writes of any size up to 4GB instead of previous 64k limit per write, Multiple asynchronous flushes can be issued, both internally and by the caller, to satisfy a single call, Pagefile fragmentation improvements, On dirty bit faults, we use interlocked queuing operation to free the pagefile space of the corresponding page, Avoids PFN lock acquisitions, Reduces needless pagefile fragmentation, Elimination of pagefile writes and potential subsequent re-reads of completely zero pages,Check pages at trim time to see if they are all zero,Optimization used to make this nearly free,User virtual address used to check for the first and last ULONG_PTR being zero; if they both are, then,After the page is trimmed, and TLB invalidated, a kernel mapping used to make the final check of the entire page,Avoids needless scans & TLB flushes,We've measured over 90% success rate with this algorithm, Access to large section performance increases,A subsection is the name of the data structure used to describe on-disk file spans for sections ,The subsection structure was converted,From a singly linked (i.e., linear walk required),To a balanced AVL tree,Enables huge performance gain for sections mapping large files,User mappings & flushes, system cache mappings, flushes & purges, section-based backups, etc,Mapped page writer does flushing based on a sweep hand,Data is written out much sooner than the prior 5 minute "flush everything" model,
+  * /* vista */ I/O Reduced data loss in the face of crashes, Flush all modified data to its backing store (local & remote) if we are going to bugcheck due to a failed inpage,Only failed inpages of kernel and/or drivers are fatal,Failed inpages of user process code/data merely results in an inpage exception being handed to the application
+  * General performance improvements, including translation buffer optimizations and improvements to internal data structures and algorithmic performance.
+  * /* vista */ Microsoft Terminal Services improvements, including new Terminal Services session objects.
+  * /* vista */ Robustness and diagnosability improvements, including reduced data loss from failed in-page operations.
 Developers who write NUMA-aware applications or drivers that run on NUMA systems may want to modify their code to take advantage of new and expanded NUMA-related APIs. Other memory management changes should be transparent to both applications and drivers.
 
 ===== Heap Manager =====
@@ -80,34 +79,34 @@ Some of the changes in this area include block metadata encoding, integrity chec
 
 Changes to the Windows registry include several significant new innovations:
 
-  - Transaction support for registry operations. Transaction support allows the registry to provide “all or none” semantics for a group of registry operations. The registry can also collaborate with other resource managers in the system such as transactional NTFS (TxF) to enable transactions that span file system and registry operations.
-  - Optimizations to reduce the possibility of registry corruption. One such mitigation mechanism protects memory pages from accidental corruption by other components by marking pages as read only. When the registry must write data to one of these pages, its access mode is changed from read-only to read/write. After the write operation is completed, the page's access mode reverts to read-only.
-  - Registry filtering that is consistent with the file system filtering model. The registry filtering model was enhanced to be consistent with the file system filtering model. The new model adds support for redirecting calls and modifying parameters in addition to the existing support for monitoring and blocking calls. 
+  * Transaction support for registry operations. Transaction support allows the registry to provide “all or none” semantics for a group of registry operations. The registry can also collaborate with other resource managers in the system such as transactional NTFS (TxF) to enable transactions that span file system and registry operations.
+  * Optimizations to reduce the possibility of registry corruption. One such mitigation mechanism protects memory pages from accidental corruption by other components by marking pages as read only. When the registry must write data to one of these pages, its access mode is changed from read-only to read/write. After the write operation is completed, the page's access mode reverts to read-only.
+  * Registry filtering that is consistent with the file system filtering model. The registry filtering model was enhanced to be consistent with the file system filtering model. The new model adds support for redirecting calls and modifying parameters in addition to the existing support for monitoring and blocking calls. 
 Similar to the file system filtering model, the new registry filtering model allows filters to register at specific positions on the filtering stack by introducing the concept of altitudes for filter registrations. Developers of registry filter drivers for Windows Vista should register their minifilter altitudes with Microsoft at the location listed in "Windows Registry Allocation" at the end of this section.
 
-  - Registry virtualization support. Registry virtualization support enables legacy applications to run in non-administrator accounts. Registry virtualization isolates write operations that have a global impact to a per-user location. This redirection of writes is transparent to applications and is applicable only to operations on keys in the software hive (HKLM\Software). All other keys are unaffected by virtualization.
-  - Minifilter Altitude Allocation [[http://go.microsoft.com/fwlink/?LinkId=66682|http://go.microsoft.com/fwlink/?LinkId=66682]]
+  * Registry virtualization support. Registry virtualization support enables legacy applications to run in non-administrator accounts. Registry virtualization isolates write operations that have a global impact to a per-user location. This redirection of writes is transparent to applications and is applicable only to operations on keys in the software hive (HKLM\Software). All other keys are unaffected by virtualization.
+  * Minifilter Altitude Allocation [[http://go.microsoft.com/fwlink/?LinkId=66682|http://go.microsoft.com/fwlink/?LinkId=66682]]
 ===== Services Model =====
 
-  - Delayed start type for services. To address the problem of the growing number of auto-start services and their negative impact on boot performance, there is a new start type for services that do not need to start early in boot: //delayed start//. This new start type improves boot performance by starting services shortly after boot and yet retains the “unattended start” behavior.
-  - Platform support for sandboxing and protection from user-mode attacks. In an effort to reduce the attack surface exposed by services, the service control manager (SCM) provides platform support for sandboxing services and running them with least privilege by using the Windows service hardening infrastructure. In addition, services are also protected from user interface attacks by running them in Session 0 and isolating this session from other user sessions.
-  - Manageability improvements. The service model provides a new notification API to track service state changes. These notifications work both locally and remotely, and remove the requirement for services or clients to use polling loops to monitor state changes. In addition, support for failure actions has been extended to provide recovery actions for non-crash failures.
-  - [[http://go.microsoft.com/fwlink/?LinkId=66644|http://go.microsoft.com/fwlink/?LinkId=66644]]
-  - [[http://go.microsoft.com/fwlink/?LinkId=67470|http://go.microsoft.com/fwlink/?LinkId=67470]]
-  - [[http://go.microsoft.com/fwlink/?LinkId=67471|http://go.microsoft.com/fwlink/?LinkId=67471]]
+  * Delayed start type for services. To address the problem of the growing number of auto-start services and their negative impact on boot performance, there is a new start type for services that do not need to start early in boot: //delayed start//. This new start type improves boot performance by starting services shortly after boot and yet retains the “unattended start” behavior.
+  * Platform support for sandboxing and protection from user-mode attacks. In an effort to reduce the attack surface exposed by services, the service control manager (SCM) provides platform support for sandboxing services and running them with least privilege by using the Windows service hardening infrastructure. In addition, services are also protected from user interface attacks by running them in Session 0 and isolating this session from other user sessions.
+  * Manageability improvements. The service model provides a new notification API to track service state changes. These notifications work both locally and remotely, and remove the requirement for services or clients to use polling loops to monitor state changes. In addition, support for failure actions has been extended to provide recovery actions for non-crash failures.
+  * [[http://go.microsoft.com/fwlink/?LinkId=66644|http://go.microsoft.com/fwlink/?LinkId=66644]]
+  * [[http://go.microsoft.com/fwlink/?LinkId=67470|http://go.microsoft.com/fwlink/?LinkId=67470]]
+  * [[http://go.microsoft.com/fwlink/?LinkId=67471|http://go.microsoft.com/fwlink/?LinkId=67471]]
 ===== Windows Hardware Error Architecture =====
 
 According to Microsoft’s Online Crash Analysis (OCA) data, approximately 7 to 10 percent of all reported crashes are due to some type of hardware error, such as processor, memory, or cache errors. Operating systems earlier than Windows Vista and Windows Server Longhorn do not expose sufficient error information to determine the root cause of these types of crashes from OCA data. Issues include the lack of a common error record format, disparate sources of errors, disparate signaling and reporting mechanisms, the fact that existing error management implementations are proprietary, and other factors.
 
 Windows Server Longhorn implements WHEA, a common operating system/hardware error-handling infrastructure that builds on PCI Express Advanced Error Reporting (AER). WHEA provides rich hardware error data and helps reduce mean time to recovery through the following mechanisms:
 
-  - A generic mechanism for error source discovery.
-  - A common error-record format for operating system and hardware errors.
-  - A common error-handling flow for operating system and hardware errors.
-  - A persistence mechanism for operating system error records.
-  - A common hardware error-eventing model based on Event Tracing for Windows (ETW) for management applications.
-  - http://download.microsoft.com/download/9/8/f/98f3fe47-dfc3-4e74-92a3-088782200fe7/TWAR05009_WinHEC05.ppt
-  - http://download.microsoft.com/download/9/8/f/98f3fe47-dfc3-4e74-92a3-088782200fe7/TWAR05008_WinHEC05.ppt
+  * A generic mechanism for error source discovery.
+  * A common error-record format for operating system and hardware errors.
+  * A common error-handling flow for operating system and hardware errors.
+  * A persistence mechanism for operating system error records.
+  * A common hardware error-eventing model based on Event Tracing for Windows (ETW) for management applications.
+  * http://download.microsoft.com/download/9/8/f/98f3fe47-dfc3-4e74-92a3-088782200fe7/TWAR05009_WinHEC05.ppt
+  * http://download.microsoft.com/download/9/8/f/98f3fe47-dfc3-4e74-92a3-088782200fe7/TWAR05008_WinHEC05.ppt
 
 
 # http://en.wikipedia.org/wiki/Features_new_to_Windows_Vista
@@ -298,15 +297,15 @@ Protected Processes [[http://go.microsoft.com/fwlink/?LinkId=69749|http://go.mic
 
 The user-mode dynamic-link library (DLL) loader plays a fundamental role in process and thread creation. Every time a process or thread is created, the loader is invoked to complete the following tasks that are related to DLLs and that are required by the process or thread in question: 
 
-  - Determine appropriate DLL load order and resolve dependencies 
-  - Load all required DLLs 
-  - Unload DLLs when they are no longer needed
+  * Determine appropriate DLL load order and resolve dependencies 
+  * Load all required DLLs 
+  * Unload DLLs when they are no longer needed
 The Windows Vista DLL loader has undergone a number of improvements, including: 
 
-  - Improved process creation time performance. A significant portion of process creation time is spent resolving DLL dependencies and processing DLL imports. 
+  * Improved process creation time performance. A significant portion of process creation time is spent resolving DLL dependencies and processing DLL imports. 
 Improvements to import processing algorithms have reduced processing time by an impressive factor of 1000x in some scenarios (from ~800,000 cycles to ~800 cycles). End-to-end process creation times were reduced by as much as 10 percent for some of the more DLL-heavy applications. 
 
-  - Fewer reboots resulting from system DLL servicing. In earlier versions of Windows operating systems, before Windows Vista, whenever a system or core DLL was updated by using a service pack, security patch, or similar mechanism, a reboot was required. The reboot was required because no mechanism could identify which system services had loaded the DLL in question. Therefore, the entire system had to be rebooted to ensure that the earlier version of the DLL was unloaded and the updated DLL was loaded instead.  
+  * Fewer reboots resulting from system DLL servicing. In earlier versions of Windows operating systems, before Windows Vista, whenever a system or core DLL was updated by using a service pack, security patch, or similar mechanism, a reboot was required. The reboot was required because no mechanism could identify which system services had loaded the DLL in question. Therefore, the entire system had to be rebooted to ensure that the earlier version of the DLL was unloaded and the updated DLL was loaded instead.  
 Enhanced bookkeeping techniques in the Windows Vista loader allow the system to maintain a complete list of services that have loaded a particular DLL. When that DLL is updated, the system can identify and restart only the specific services that are using the DLL to be updated, instead of rebooting the entire system. This change helps to decrease downtime, thus increasing the availability of the system even while it is being upgraded or serviced. 
 
 Note that some system DLLs, including NTDLL.dll and kernel32.dll, still require a reboot when they are being serviced**.**
@@ -319,12 +318,12 @@ Microsoft has completely reengineered the boot environment for Windows Vista to 
 
 BCD is designed to handle boot environment data for any type of system. It provides access to the information and applications that Windows Vista and later versions of Windows use to load the operating system or run boot applications such as memory diagnostics. Some key characteristics include:
 
-  - BCD provides clean and intuitive structured storage for boot settings.
-  - BCD abstracts the underlying data store, making BCD independent of the underlying firmware or processor architecture. BCD currently handles both PC/AT and EFI systems, and can be readily extended to accommodate future improvements in hardware and firmware.
-  - BCD is available at run time as well as during the boot process.
-  - BCD provides improved security over boot.ini. It allows secure lockdown of the storage format and flexible assignment of the rights that are required for changing boot settings. BCD is stored in a binary format and cannot be edited directly.
-  - BCD is designed to handle systems with multiple versions and configurations of Windows, including versions earlier than Windows Vista. 
-  - BCD is the only boot data store that is required for Windows Vista and later versions of Windows. BCD supports the loading of earlier versions of Windows, but they are ultimately loaded by Ntldr.exe and must still store their boot options in a boot.ini file.
+  * BCD provides clean and intuitive structured storage for boot settings.
+  * BCD abstracts the underlying data store, making BCD independent of the underlying firmware or processor architecture. BCD currently handles both PC/AT and EFI systems, and can be readily extended to accommodate future improvements in hardware and firmware.
+  * BCD is available at run time as well as during the boot process.
+  * BCD provides improved security over boot.ini. It allows secure lockdown of the storage format and flexible assignment of the rights that are required for changing boot settings. BCD is stored in a binary format and cannot be edited directly.
+  * BCD is designed to handle systems with multiple versions and configurations of Windows, including versions earlier than Windows Vista. 
+  * BCD is the only boot data store that is required for Windows Vista and later versions of Windows. BCD supports the loading of earlier versions of Windows, but they are ultimately loaded by Ntldr.exe and must still store their boot options in a boot.ini file.
 Instead, users can interact with BCD through several tools. Developers can programmatically manipulate a BCD store through the BCD Windows Management Instrumentation (WMI) provider that can be used for both local and remote management of BCD stores independent of the underlying firmware.
 
 ===== Dynamic Hardware Partitioning =====
@@ -339,40 +338,40 @@ For compliant hardware platforms, Windows Server Longhorn supports hot add of pr
 
 Windows Vista and Windows Server Longhorn continue to advance and adopt power management technologies with a rich set of new features and capabilities:
 
-  - Simplified power policies that make it easier for users to match usage patterns to the appropriate power policy.
-  - A new hybrid sleep state, which combines aspects of standby (suspend to RAM) and hibernate (suspend to disk) to protect the user’s data while in standby.
-  - Windows Direct Experience, which provides support for starting a PC directly to a specific media experience (for example, to launch directly into a media player when a "media" button is pushed).
-  - A new "away mode" that supports media-oriented PC usage models.
-  - Reliable power management transitions.
-  - Extensive diagnostic tracing and error reporting infrastructure.
-  - Comprehensive group policy control for power management settings.
-  - Improved battery meter that provides simple, quick access to basic power management settings.
-  - Significant improvements to the overall power management user interface and user experience.
+  * Simplified power policies that make it easier for users to match usage patterns to the appropriate power policy.
+  * A new hybrid sleep state, which combines aspects of standby (suspend to RAM) and hibernate (suspend to disk) to protect the user’s data while in standby.
+  * Windows Direct Experience, which provides support for starting a PC directly to a specific media experience (for example, to launch directly into a media player when a "media" button is pushed).
+  * A new "away mode" that supports media-oriented PC usage models.
+  * Reliable power management transitions.
+  * Extensive diagnostic tracing and error reporting infrastructure.
+  * Comprehensive group policy control for power management settings.
+  * Improved battery meter that provides simple, quick access to basic power management settings.
+  * Significant improvements to the overall power management user interface and user experience.
 ===== ACPI =====
 
 Windows Vista and Windows Server Longhorn continue to advance support for the ACPI specification, including selected features from ACPI 3.0:
 
-  - Complete support for ACPI 2.0 processor performance objects.
-  - ACPI 3.0 processor domain dependency and throttling objects.
-  - Operating System Capabilities (_OSC) method invocation to facilitate transitions to native support of PCI-E features.
-  - ACPI General Purpose Event (GPE) block device support.
-  - New firmware tables API.
+  * Complete support for ACPI 2.0 processor performance objects.
+  * ACPI 3.0 processor domain dependency and throttling objects.
+  * Operating System Capabilities (_OSC) method invocation to facilitate transitions to native support of PCI-E features.
+  * ACPI General Purpose Event (GPE) block device support.
+  * New firmware tables API.
 ACPI / Power Management – Architecture and Driver Support\\ [[http://go.microsoft.com/fwlink/?linkid=67487|http://go.microsoft.com/fwlink/?linkid=67487]]
 
 ===== PCI and PCI Express =====
 
 Windows Vista and Windows Server Longhorn support a significant number of features in the PCI Express 1.1 specification, including:
 
-  - Extended configuration space.
-  - Segments.
-  - PCI Express registers, including capability registers, save and restore of configuration settings, and BIOS configurations.
-  - Device serial numbers.
-  - PCI Express hierarchy.
-  - Message-signaled interrupts (MSI and MSI-X).
-  - Hot plug.
-  - Native power management events.
-  - Active-state power management.
-  - Advanced Error Reporting (AER).
+  * Extended configuration space.
+  * Segments.
+  * PCI Express registers, including capability registers, save and restore of configuration settings, and BIOS configurations.
+  * Device serial numbers.
+  * PCI Express hierarchy.
+  * Message-signaled interrupts (MSI and MSI-X).
+  * Hot plug.
+  * Native power management events.
+  * Active-state power management.
+  * Advanced Error Reporting (AER).
 System manufacturers, hardware vendors, and driver developers should be familiar with these features as described in the PCI Express 1.1 specification and should design their products to comply with that specification.
 
 ===== new api =====
@@ -449,17 +448,17 @@ K>Интересно узнать отношение народа к подоб�
 
 Windows Vista relies on digital signatures on kernel-mode code to increase the safety and stability of the Microsoft Windows platform and enable new customer experiences with next generation premium content:
 
-  - Drivers must be signed for devices that stream protected content. This includes audio drivers that use Protected User Mode Audio (PUMA) and Protected Audio Path (PAP), and video device drivers that handle protected video path-output protection management (PVP-OPM) commands.
-  - Unsigned kernel-mode software does not load and does not run on x64-based systems.
+  * Drivers must be signed for devices that stream protected content. This includes audio drivers that use Protected User Mode Audio (PUMA) and Protected Audio Path (PAP), and video device drivers that handle protected video path-output protection management (PVP-OPM) commands.
+  * Unsigned kernel-mode software does not load and does not run on x64-based systems.
 Even users with administrator privileges cannot load unsigned kernel-mode code on x64-based systems. This applies for any software module that loads in kernel mode, including device drivers, filter drivers, and kernel services.
 
 The mandatory kernel-mode code signing policy applies to all kernel-mode software on x64-based systems that are running Windows Vista. However, Microsoft encourages publishers to digitally sign all software, including device drivers for both 32-bit and 64-bit platforms. Windows Vista performs kernel-mode signature verification on x86-based systems to support protected media content. Kernel-mode driver signatures are not mandatory for 32-bit systems.
 
 ==== Digital Signatures aims ====
 
-  - защита от малвари (прикрытие);
-  - digital rights management (DRM);
-  - контроль над сторонними разработчиками;
+  * защита от малвари (прикрытие);
+  * digital rights management (DRM);
+  * контроль над сторонними разработчиками;
 ==== The PMP and Output Protection ====
 
 Protected Media Path (PMP), Protected User-Mode Audio (PUMA), Protected Video Path (PVP), protected video path-output protection management (PVP_OPM), Secure Audio Path (SAP)
@@ -468,10 +467,10 @@ This section provides a brief summary of key PMP concepts. For further informati
 
 The PMP consists of four primary components, MIG, PVP-OPM, PVP-UAB, and PUMA:
 
-  - MIG provides content protection for Media Foundation applications. It is an extensible platform for sourcing, sinking, and manipulating protected media content. MIG governs policy usage and runs media in a separate process to ensure that media content is used only in a way that is consistent with the intent of the content provider.
-  - PVP-OPM ensures that a PC’s integrated graphics adapter outputs have the protection that is required under license agreement with content owners. It provides reliable control of output protection schemes such as high-bandwidth digital content protection (HDCP), Macrovision, and Copy Generation Management System-Analog (CGMS-A).
-  - PVP-UAB encrypts premium content as it passes over the PCI Express (PCIe) bus to a discrete graphics adapter. This encryption is required when a content owner’s policy regards the PCIe bus as a user-accessible bus.
-  - PUMA provides a safer environment for audio playback, as well as checking that the enabled outputs are consistent with what the premium content provider allows. PUMA includes the same level of audio output protection management that SAP provided in Windows XP, but it is handled in a completely different way and takes advantage of the PE.
+  * MIG provides content protection for Media Foundation applications. It is an extensible platform for sourcing, sinking, and manipulating protected media content. MIG governs policy usage and runs media in a separate process to ensure that media content is used only in a way that is consistent with the intent of the content provider.
+  * PVP-OPM ensures that a PC’s integrated graphics adapter outputs have the protection that is required under license agreement with content owners. It provides reliable control of output protection schemes such as high-bandwidth digital content protection (HDCP), Macrovision, and Copy Generation Management System-Analog (CGMS-A).
+  * PVP-UAB encrypts premium content as it passes over the PCI Express (PCIe) bus to a discrete graphics adapter. This encryption is required when a content owner’s policy regards the PCIe bus as a user-accessible bus.
+  * PUMA provides a safer environment for audio playback, as well as checking that the enabled outputs are consistent with what the premium content provider allows. PUMA includes the same level of audio output protection management that SAP provided in Windows XP, but it is handled in a completely different way and takes advantage of the PE.
 Manufacturers of graphics adapters must implement the required protection mechanisms on card outputs and must ensure that the associated drivers have robust control of those outputs. Manufacturers must sign a PVP‑OPM or PVP-UAB license agreement to receive a PVP certificate, which must be embedded in their drivers. Without the embedded PVP certificate, Windows Vista is not allowed to pass premium content to the driver.
 
 The following figure provides a quick summary of how components that are discussed in this paper interact in Windows Vista.
@@ -482,28 +481,26 @@ The following figure provides a quick summary of how components that are discuss
 
 During the early stages of development, developers can disable enforcement in Windows so that driver signing is not necessary. The following options are available for developers to disable kernel mode code signing enforcement temporarily so that Windows Vista will load an unsigned driver.
 
-  - Attaching a kernel debugger. Attaching an active kernel debugger to the target computer disables the enforcement of kernel mode signatures in Windows Vista and allows the driver to load.
-  - Using the F8 option. An F8 Advanced Boot Option introduced with Windows Vista—“Disable Driver Signature Enforcement”—is available to disable the kernel-signing enforcement only for the current boot session. This setting does not persist across boot sessions.
+  * Attaching a kernel debugger. Attaching an active kernel debugger to the target computer disables the enforcement of kernel mode signatures in Windows Vista and allows the driver to load.
+  * Using the F8 option. An F8 Advanced Boot Option introduced with Windows Vista—“Disable Driver Signature Enforcement”—is available to disable the kernel-signing enforcement only for the current boot session. This setting does not persist across boot sessions.
 {{vista.stuff_Image_0.png}}
 
-  - Setting the boot configuration. A boot configuration setting is available in the Windows Vista Beta2 release that disables the enforcement of kernel mode signatures to be persisted across boot sessions. 
+  * Setting the boot configuration. A boot configuration setting is available in the Windows Vista Beta2 release that disables the enforcement of kernel mode signatures to be persisted across boot sessions. 
 Windows Vista includes a command-line tool, BCDedit, which can be used to set the option in Windows Vista Beta2 to disable signature checks. To use BCDedit, the user must be a member of the Administrators group on the system and run the command from an elevated command prompt. An elevated command prompt can be launched by creating a desktop shortcut to cmd.exe, and then using right-click and “Run as administrator”.  
 
 The following shows an example of running BDCedit at the command prompt:
 
+<code>
 // Disable enforcement – no signing checks
-
 Bcdedit.exe –set nointegritychecks ON 
 
 // Enable enforcement – signing checks apply
-
 Bcdedit.exe –set nointegritychecks OFF 
 
 // Disabling integrity check on an alternate OS 
-
 // specified by a GUID for the system ID
-
 Bcdedit.exe –set {4518fd64-05f1-11da-b13e-00306e386aee} nointegritychecks ON 
+</code>
 
 Note: The Bcdedit option to disable integrity checks is only available for loading unsigned drivers on the Windows Vista Beta2 release. For more information, see the BCD Editor FAQ on the MSDN Web site.
 
@@ -513,12 +510,12 @@ Test signing provides additional options to development organizations for incorp
 
 Test signing may be appropriate to use in the following scenarios:
 
-  - Development teams need to test pre-release versions of a driver on test systems where it is not practical to attach a kernel debugger.
-  - Automated testing of kernel mode software make it impractical to use the F8 Advanced Boot Option to temporarily disable driver signature enforcement on every machine boot cycle.
+  * Development teams need to test pre-release versions of a driver on test systems where it is not practical to attach a kernel debugger.
+  * Automated testing of kernel mode software make it impractical to use the F8 Advanced Boot Option to temporarily disable driver signature enforcement on every machine boot cycle.
 Test signing allows developers to sign pre-release versions of kernel mode binaries in such a way that Windows Vista can verify and load the signed driver. Test signing involves the following differences from normal production or release signing:
 
-  - Certificates used for test signing can be generated using the Makecert.exe code signing tool, or issued by an Enterprise CA, instead of using a SPC issued by a commercial CA. 
-  - The Windows Vista boot configuration option to enable Test Signing must be enabled on the Windows Vista system that will load the test signed driver.
+  * Certificates used for test signing can be generated using the Makecert.exe code signing tool, or issued by an Enterprise CA, instead of using a SPC issued by a commercial CA. 
+  * The Windows Vista boot configuration option to enable Test Signing must be enabled on the Windows Vista system that will load the test signed driver.
 Development organizations can setup an enterprise PKI and issue their own test code signing certificates to use for test signing. When Windows Vista enables Test Signing, verification of the digital signature on the driver binary will accept certificates issued by any CA or Issuing authority. Test signing verifies the driver image is signed, but certificate path validation performed in kernel mode does not require the issuer to be configured as a trusted root authority. This allows organizations to use individual signatures on test binaries, based on the credentials issued for code signing within the organization. Microsoft recommends this form of deployment for test signing within the Kernel Mode Code Signing.
 
 Using certificates generated by the makecert.exe tool is also acceptable for test signing. However, certificates generated by makecert often do not provide useful identity information and there is no way to track which individual developer created a test signed version of the pre-release binary. 
@@ -533,7 +530,7 @@ Test signed kernel mode binaries will not load on Windows Vista systems by defau
 
 ==== MakeCert ====
 
-MakeCert generates digital certificates that can be used for test signing. They can be either self signed or issued and signed by the Root Agent key. The test certificate can be placed in a file, a system certificate store, or both. If the test environment requires authentication, use only self-signed certificates. The Windows Vista Beta 2 release accepts only test certificates that are generated by Makecert.
+MakeCert generates digital certificates that can be used for test signing. They can be either self signed or issued and signed by the Root Agent key. The test certificate can be placed in a file, a system certificate store, or both. If the test environment requires authentication, use only self-signed certificates. The Windows Vista Beta 2 release accepts only test certificates that are generated by Makecert.
 
 ==== Enabling Test Signing ====
 
@@ -541,15 +538,13 @@ Use the Bcdedit command-line tool to enable test signing. To use BCDedit, the us
 
 The following shows an example of running BDCedit at the command prompt:
 
+<code>
 // Accept test signed kernel mode signatures
-
 Bcdedit.exe –set TESTSIGNING ON 
 
 // Do not accept test signed kernel mode signatures
-
 Bcdedit.exe –set TESTSIGNING OFF 
-
-
+</code>
 
 The TESTSIGNING boot configuration option determines whether Windows Vista accepts test signed kernel mode binaries. The option is not defined by default which means digital signatures on test signed kernel mode drivers will not verify and will not load. When Windows Vista accepts test signed kernel mode binaries, some premium content that is protected may not be accessible on the system.
 
@@ -613,9 +608,9 @@ If your driver must perform a task that you think cannot be accomplished without
 
 http://searchsecurity.techtarget.com/originalContent/0,289142,sid14_gci1210002,00.html
 
-  - борьба с малварью (просто как прикрытие);
-  - позиционирование висты как платформы для проигрывания защищенного контента *;
-  - устранение разработчиков av и firewall'ов и проч.
+  * борьба с малварью (просто как прикрытие);
+  * позиционирование висты как платформы для проигрывания защищенного контента *;
+  * устранение разработчиков av и firewall'ов и проч.
 * digital rights management (DRM)
 
 # http://www.microsoft.com/whdc/driver/kernel/64bitpatch_FAQ.mspx
